@@ -1,8 +1,11 @@
-import collections
 import os
-import tensorflow as tf
+
+import collections
 import glob
+import tensorflow as tf
+
 import input_preprocess
+import common
 
 # Named tuple to describe the dataset properties.
 DatasetDescriptor = collections.namedtuple(
@@ -186,22 +189,22 @@ class Dataset(object):
 
         features = {
             'image/encoded':
-                tf.FixedLenFeature((), tf.string, default_value=''),
+                tf.io.FixedLenFeature((), tf.string, default_value=''),
             'image/filename':
-                tf.FixedLenFeature((), tf.string, default_value=''),
+                tf.io.FixedLenFeature((), tf.string, default_value=''),
             'image/format':
-                tf.FixedLenFeature((), tf.string, default_value='jpeg'),
+                tf.io.FixedLenFeature((), tf.string, default_value='jpeg'),
             'image/height':
-                tf.FixedLenFeature((), tf.int64, default_value=0),
+                tf.io.FixedLenFeature((), tf.int64, default_value=0),
             'image/width':
-                tf.FixedLenFeature((), tf.int64, default_value=0),
+                tf.io.FixedLenFeature((), tf.int64, default_value=0),
             'image/segmentation/class/encoded':
-                tf.FixedLenFeature((), tf.string, default_value=''),
+                tf.io.FixedLenFeature((), tf.string, default_value=''),
             'image/segmentation/class/format':
-                tf.FixedLenFeature((), tf.string, default_value='png'),
+                tf.io.FixedLenFeature((), tf.string, default_value='png'),
         }
 
-        parsed_features = tf.parse_single_example(example_proto, features)
+        parsed_features = tf.io.parse_single_example(example_proto, features)
 
         image = _decode_image(parsed_features['image/encoded'], channels=3)
 
@@ -267,8 +270,8 @@ class Dataset(object):
 
         # perform online augmentation of input image
         if self.online_augmentation_policy and self.is_training:
-            tf.logging.info("Use Online Augmentation with following Policy:")
-            tf.logging.info(self.online_augmentation_policy)
+            print("Use Online Augmentation with following Policy:")
+            print(self.online_augmentation_policy)
             image = input_preprocess.tf_online_augment(image, policy=self.online_augmentation_policy)
             image.set_shape([None, None, 3])
 

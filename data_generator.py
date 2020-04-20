@@ -12,11 +12,7 @@ DatasetDescriptor = collections.namedtuple(
     'DatasetDescriptor',
     [
         'splits_to_sizes',  # Splits of the dataset into training, val and test.
-        'num_classes',  # Number of semantic classes, including the
-        # background class (if exists). For example, there
-        # are 20 foreground classes + 1 background class in
-        # the PASCAL VOC 2012 dataset. Thus, we set
-        # num_classes=21.
+        'num_classes',  # Number of classes
         'ignore_label',  # Ignore label value.
         'data_dir',
         'local_dir',
@@ -69,33 +65,29 @@ class Dataset(object):
                  use_fraction_scale_to_max_num_samples=None,
                  max_num_samples=None,
                  ignore_label=None):
-        """Initializes the dataset.
+        """
+        Initialize Dataset
+        :param dataset_name:
+        :param split_name:
+        :param dataset_dir:
+        :param batch_size:
+        :param crop_size:
+        :param resize_factor:
+        :param min_scale_factor:
+        :param max_scale_factor:
+        :param scale_factor_step_size:
+        :param model_variant:
+        :param num_readers:
+        :param is_training:
+        :param should_shuffle:
+        :param should_repeat:
+        :param online_augmentation_policy:
+        :param use_fraction:
+        :param use_fraction_scale_to_max_num_samples:
+        :param max_num_samples:
+        :param ignore_label:
+        """
 
-    Args:
-      dataset_name: Dataset name.
-      split_name: A train/val Split name.
-      dataset_dir: The directory of the dataset sources.
-      batch_size: Batch size.
-      crop_size: The size used to crop the image and label.
-      min_resize_value: Desired size of the smaller image side.
-      max_resize_value: Maximum allowed size of the larger image side.
-      resize_factor: Resized dimensions are multiple of factor plus one.
-      min_scale_factor: Minimum scale factor value.
-      max_scale_factor: Maximum scale factor value.
-      scale_factor_step_size: The step size from min scale factor to max scale
-        factor. The input is randomly scaled based on the value of
-        (min_scale_factor, max_scale_factor, scale_factor_step_size).
-      model_variant: Model variant (string) for choosing how to mean-subtract
-        the images. See feature_extractor.network_map for supported model
-        variants.
-      num_readers: Number of readers for data provider.
-      is_training: Boolean, if dataset is for training or not.
-      should_shuffle: Boolean, if should shuffle the input data.
-      should_repeat: Boolean, if should repeat the input data.
-
-    Raises:
-      ValueError: Dataset name and split name are not supported.
-    """
         if dataset_name not in _DATASETS_INFORMATION:
             raise ValueError('The specified dataset "{0}" is not supported yet.'.format(dataset_name))
         self.dataset_name = dataset_name
@@ -126,11 +118,6 @@ class Dataset(object):
         else:
             self.crop_size = _DATASETS_INFORMATION[dataset_name].min_resize_value + 1, \
                              _DATASETS_INFORMATION[dataset_name].max_resize_value + 1
-
-        # do not random scale gta_fake, it is already scaled and cropped
-        if dataset_name == "gta_fake" or dataset_name == "gta_fake_2":
-            self.min_scale_factor = 1.0
-            self.max_scale_factor = 1.0
 
         self.num_of_classes = _DATASETS_INFORMATION[self.dataset_name].num_classes
         self.class_names = _DATASETS_INFORMATION[self.dataset_name].class_names
@@ -167,15 +154,15 @@ class Dataset(object):
     def _parse_function(self, example_proto):
         """Function to parse the example proto.
 
-    Args:
-      example_proto: Proto in the format of tf.Example.
+        Args:
+          example_proto: Proto in the format of tf.Example.
 
-    Returns:
-      A dictionary with parsed image, label, height, width and image name.
+        Returns:
+          A dictionary with parsed image, label, height, width and image name.
 
-    Raises:
-      ValueError: Label is of wrong shape.
-    """
+        Raises:
+          ValueError: Label is of wrong shape.
+        """
 
         # Currently only supports jpeg and png.
         # Need to use this logic because the shape is not known for
@@ -242,15 +229,15 @@ class Dataset(object):
     def _preprocess_image(self, sample):
         """Preprocesses the image and label.
 
-    Args:
-      sample: A sample containing image and label.
+        Args:
+          sample: A sample containing image and label.
 
-    Returns:
-      sample: Sample with preprocessed image and label.
+        Returns:
+          sample: Sample with preprocessed image and label.
 
-    Raises:
-      ValueError: Ground truth label not provided during training.
-    """
+        Raises:
+          ValueError: Ground truth label not provided during training.
+        """
         image = sample[common.IMAGE]
         label = sample[common.LABELS_CLASS]
 
@@ -287,28 +274,26 @@ class Dataset(object):
         return sample
 
     def get_tf_dataset(self):
+        """Gets the dataset as tf.dataset.
+        :return:
+        """
         files = self._get_all_files()
 
         dataset = (
             tf.data.TFRecordDataset(files, num_parallel_reads=self.num_readers)
-                .take(self.max_num_samples)
-                .map(self._parse_function, num_parallel_calls=self.num_readers)
-                .map(self._preprocess_image, num_parallel_calls=self.num_readers))
+            .take(self.max_num_samples)
+            .map(self._parse_function, num_parallel_calls=self.num_readers)
+            .map(self._preprocess_image, num_parallel_calls=self.num_readers))
 
         return dataset
 
     def get_one_shot_iterator(self):
         """Gets an iterator that iterates across the dataset once.
 
-    Returns:
-      An iterator of type tf.data.Iterator.
-    """
-        files = self._get_all_files()
-
-        dataset = (
-            tf.data.TFRecordDataset(files, num_parallel_reads=self.num_readers)
-                .map(self._parse_function, num_parallel_calls=self.num_readers)
-                .map(self._preprocess_image, num_parallel_calls=self.num_readers))
+        Returns:
+          An iterator of type tf.data.Iterator.
+        """
+        dataset = self.get_tf_dataset()
 
         if self.should_shuffle:
             dataset = dataset.shuffle(buffer_size=100)
@@ -318,15 +303,15 @@ class Dataset(object):
         else:
             dataset = dataset.repeat(1)
 
-        dataset = dataset.batch(self.batch_size).prefetch(50)
+        dataset = dataset.batch(self.batch_size).prefetch(
+            buffer_size=tf.data.experimental.AUTOTUNE)
         return dataset.make_one_shot_iterator()
 
     def _get_all_files(self):
         """Gets all the files to read data from.
-
-    Returns:
-      A list of input files.
-    """
+        Returns:
+          A list of input files.
+        """
         glob_pattern = os.path.join(self.dataset_dir, "*" + self.split_name + "*" + ".tfrecord")
         paths_preprocessed = glob.glob(glob_pattern)
         paths_preprocessed = sorted(paths_preprocessed)

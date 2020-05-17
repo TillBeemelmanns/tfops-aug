@@ -46,7 +46,7 @@ if __name__ == '__main__':
         should_shuffle=False,
         should_repeat=False,
         augmentation_policy=augmentation_policy,
-        num_samples=1000,
+        num_samples=100,
         ignore_label=None
     )
 
@@ -54,17 +54,19 @@ if __name__ == '__main__':
 
     print(tf_dataset)
 
-    plot = False
+    plot = True
+    epochs = 1
 
     start_time = time.perf_counter()
-    for element in tf_dataset:
+    for epoch in range(epochs):
+        for element in tf_dataset:
 
-        # Performing a training step
-        time.sleep(0.01)
+            # Performing a training step
+            time.sleep(0.01)
 
-        if plot:
-            image = element[common.IMAGE].numpy()[0, :, :, :]
-            plt.imshow(image/255.0)
-            plt.show()
+            if plot:
+                image = element[common.IMAGE].numpy()[0, :, :, :]
+                plt.imshow(image/255.0)
+                plt.show()
 
     print("Execution time:", time.perf_counter() - start_time)

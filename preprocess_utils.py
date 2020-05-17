@@ -378,8 +378,7 @@ def randomly_scale_image_and_label(image, label=None, scale=1.0):
         label = tf.image.resize(
             label,
             new_dim,
-            method=get_label_resize_method(label),
-            align_corners=True)
+            method=get_label_resize_method(label))
 
     return image, label
 

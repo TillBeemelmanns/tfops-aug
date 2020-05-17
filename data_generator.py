@@ -52,10 +52,10 @@ class Dataset:
                  min_scale_factor=1.,
                  max_scale_factor=1.,
                  scale_factor_step_size=0,
-                 model_variant=None,
                  num_readers=1,
                  is_training=False,
                  should_shuffle=False,
+                 shuffle_buffer_size=1,
                  should_repeat=False,
                  augmentation_policy=None,
                  num_samples=100,
@@ -71,7 +71,6 @@ class Dataset:
         :param min_scale_factor:
         :param max_scale_factor:
         :param scale_factor_step_size:
-        :param model_variant:
         :param num_readers:
         :param is_training:
         :param should_shuffle:
@@ -98,11 +97,12 @@ class Dataset:
         self.min_scale_factor = min_scale_factor
         self.max_scale_factor = max_scale_factor
         self.scale_factor_step_size = scale_factor_step_size
-        self.model_variant = model_variant
         self.num_readers = num_readers
         self.is_training = is_training
         self.should_shuffle = should_shuffle
         self.should_repeat = should_repeat
+
+        self.shuffle_buffer_size = shuffle_buffer_size
 
         # if crop_size is set use it
         if crop_size:
@@ -268,18 +268,8 @@ class Dataset:
             .map(self._parse_function, num_parallel_calls=self.num_readers)
             .map(self._preprocess_image, num_parallel_calls=self.num_readers))
 
-        return dataset
-
-    def get_one_shot_iterator(self):
-        """Gets an iterator that iterates across the dataset once.
-
-        Returns:
-          An iterator of type tf.data.Iterator.
-        """
-        dataset = self.get_tf_dataset()
-
         if self.should_shuffle:
-            dataset = dataset.shuffle(buffer_size=100)
+            dataset = dataset.shuffle(buffer_size=self.shuffle_buffer_size)
 
         if self.should_repeat:
             dataset = dataset.repeat()  # Repeat forever for training.
@@ -288,7 +278,9 @@ class Dataset:
 
         dataset = dataset.batch(self.batch_size).prefetch(
             buffer_size=tf.data.experimental.AUTOTUNE)
-        return dataset.make_one_shot_iterator()
+
+        return dataset
+
 
     def _get_all_files(self):
         """Gets all the files to read data from.

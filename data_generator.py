@@ -14,7 +14,6 @@ DatasetDescriptor = collections.namedtuple(
         'splits_to_sizes',  # Splits of the dataset into training, val and test.
         'num_classes',  # Number of classes
         'ignore_label',  # Ignore label value.
-        'data_dir',
         'local_dir',
         'class_names',
         'min_resize_value',
@@ -31,8 +30,7 @@ _TEST_DATASET = DatasetDescriptor(
     class_names=['Road', 'Sidewalk', 'Building', 'Wall', 'Fence', 'Pole', 'Traffic light',
                  'Traffic sign', 'Vegetation', 'Terrain', 'Sky', 'Person', 'Rider', 'Car',
                  'Truck', 'Bus', 'Train', 'Motorcycle', 'Bicycle'],
-    data_dir="/data/cityscapes/tfrecord_cityscapes_original",
-    local_dir="/home/beemelmanns/Documents/ma/deeplab/datasets/cityscapes/tfrecord_cityscapes_original",
+    local_dir="/home/beemelmanns/Documents/github/auto-augment-tf2-operations/data",
     min_resize_value=1024,
     max_resize_value=2048
 )
@@ -41,7 +39,7 @@ _DATASETS_INFORMATION = {
     'test_dataset': _TEST_DATASET,
 }
 
-class Dataset(object):
+class Dataset:
     """Represents input dataset for deeplab model."""
 
     def __init__(self,
@@ -59,7 +57,7 @@ class Dataset(object):
                  is_training=False,
                  should_shuffle=False,
                  should_repeat=False,
-                 online_augmentation_policy=None,
+                 augmentation_policy=None,
                  num_samples=100,
                  ignore_label=None):
         """
@@ -78,10 +76,7 @@ class Dataset(object):
         :param is_training:
         :param should_shuffle:
         :param should_repeat:
-        :param online_augmentation_policy:
-        :param use_fraction:
-        :param use_fraction_scale_to_max_num_samples:
-        :param max_num_samples:
+        :param augmentation_policy:
         :param ignore_label:
         """
 
@@ -124,7 +119,7 @@ class Dataset(object):
             self.dataset_dir = dataset_dir
         else:
             if os.environ.get("inside_docker"):
-                self.dataset_dir = _DATASETS_INFORMATION[dataset_name].data_dir
+                raise NotImplementedError
             else:
                 self.dataset_dir = _DATASETS_INFORMATION[dataset_name].local_dir
 
@@ -137,7 +132,7 @@ class Dataset(object):
 
         self.num_samples = min(splits_to_sizes[self.split_name], num_samples)
 
-        self.online_augmentation_policy = online_augmentation_policy
+        self.online_augmentation_policy = augmentation_policy
 
     def _parse_function(self, example_proto):
         """Function to parse the example proto.

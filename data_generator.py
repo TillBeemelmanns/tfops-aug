@@ -52,7 +52,8 @@ class Dataset:
                  min_scale_factor=1.,
                  max_scale_factor=1.,
                  scale_factor_step_size=0,
-                 num_readers=1,
+                 num_parallel_reads=1,
+                 num_parallel_calls=4,
                  is_training=False,
                  should_shuffle=False,
                  shuffle_buffer_size=1,
@@ -71,7 +72,7 @@ class Dataset:
         :param min_scale_factor:
         :param max_scale_factor:
         :param scale_factor_step_size:
-        :param num_readers:
+        :param num_parallel_reads:
         :param is_training:
         :param should_shuffle:
         :param should_repeat:
@@ -97,7 +98,8 @@ class Dataset:
         self.min_scale_factor = min_scale_factor
         self.max_scale_factor = max_scale_factor
         self.scale_factor_step_size = scale_factor_step_size
-        self.num_readers = num_readers
+        self.num_parallel_reads = num_parallel_reads
+        self.num_parallel_calls = num_parallel_calls
         self.is_training = is_training
         self.should_shuffle = should_shuffle
         self.should_repeat = should_repeat
@@ -263,10 +265,10 @@ class Dataset:
         files = self._get_all_files()
 
         dataset = (
-            tf.data.TFRecordDataset(files, num_parallel_reads=self.num_readers)
+            tf.data.TFRecordDataset(files, num_parallel_reads=self.num_parallel_reads)
             .take(self.num_samples)
-            .map(self._parse_function, num_parallel_calls=self.num_readers)
-            .map(self._preprocess_image, num_parallel_calls=self.num_readers))
+            .map(self._parse_function, num_parallel_calls=self.num_parallel_calls)
+            .map(self._preprocess_image, num_parallel_calls=self.num_parallel_calls))
 
         if self.should_shuffle:
             dataset = dataset.shuffle(buffer_size=self.shuffle_buffer_size)

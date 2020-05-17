@@ -21,7 +21,7 @@ DatasetDescriptor = collections.namedtuple(
         'max_resize_value'
     ])
 
-_CITYSCAPES_INFORMATION = DatasetDescriptor(
+_TEST_DATASET = DatasetDescriptor(
     splits_to_sizes={
         'train': 2975,
         'val': 500,
@@ -38,9 +38,8 @@ _CITYSCAPES_INFORMATION = DatasetDescriptor(
 )
 
 _DATASETS_INFORMATION = {
-    'cityscapes_original': _CITYSCAPES_INFORMATION,
+    'test_dataset': _TEST_DATASET,
 }
-
 
 class Dataset(object):
     """Represents input dataset for deeplab model."""
@@ -61,9 +60,7 @@ class Dataset(object):
                  should_shuffle=False,
                  should_repeat=False,
                  online_augmentation_policy=None,
-                 use_fraction=1.0,
-                 use_fraction_scale_to_max_num_samples=None,
-                 max_num_samples=None,
+                 num_samples=100,
                  ignore_label=None):
         """
         Initialize Dataset
@@ -138,16 +135,7 @@ class Dataset(object):
 
         self.splits_to_sizes = _DATASETS_INFORMATION[self.dataset_name].splits_to_sizes
 
-        # resolve max_num_samples
-        if use_fraction is not None and use_fraction_scale_to_max_num_samples is not None:
-            # scale use_fraction to a fixed max_num_samples given by use_fraction_scale_to_max_num_samples
-            self.max_num_samples = int(use_fraction_scale_to_max_num_samples * use_fraction)
-        elif use_fraction is not None and not use_fraction_scale_to_max_num_samples:
-            # use_fraction applied to the total number of samples of the dataset
-            self.max_num_samples = int(splits_to_sizes[self.split_name] * use_fraction)
-        elif max_num_samples is not None and not use_fraction_scale_to_max_num_samples:
-            # use take max_num_samples
-            self.max_num_samples = max_num_samples
+        self.num_samples = min(splits_to_sizes[self.split_name], num_samples)
 
         self.online_augmentation_policy = online_augmentation_policy
 
@@ -195,10 +183,8 @@ class Dataset(object):
 
         image = _decode_image(parsed_features['image/encoded'], channels=3)
 
-        label = None
-        if self.split_name != common.TEST_SET:
-            label = _decode_image(
-                parsed_features['image/segmentation/class/encoded'], channels=1)
+        label = _decode_image(
+            parsed_features['image/segmentation/class/encoded'], channels=1)
 
         image_name = parsed_features['image/filename']
         if image_name is None:
@@ -259,7 +245,9 @@ class Dataset(object):
         if self.online_augmentation_policy and self.is_training:
             print("Use Online Augmentation with following Policy:")
             print(self.online_augmentation_policy)
-            image = input_preprocess.tf_online_augment(image, policy=self.online_augmentation_policy)
+            image = input_preprocess.apply_augmentation_policy(
+                image,
+                policy=self.online_augmentation_policy)
             image.set_shape([None, None, 3])
 
         sample[common.IMAGE] = image
@@ -281,7 +269,7 @@ class Dataset(object):
 
         dataset = (
             tf.data.TFRecordDataset(files, num_parallel_reads=self.num_readers)
-            .take(self.max_num_samples)
+            .take(self.num_samples)
             .map(self._parse_function, num_parallel_calls=self.num_readers)
             .map(self._preprocess_image, num_parallel_calls=self.num_readers))
 

@@ -116,10 +116,15 @@ def preprocess_image_and_label(image,
     return original_image, processed_image, label
 
 
-def tf_online_augment(image, policy):
+def apply_augmentation_policy(image, policy):
+    """
+    Applies the augmentation policy to the input image.
+    :param image:
+    :param policy:
+    :return:
+    """
     number_of_policies = len(policy)
 
-    # minvalue is in range and maxval-1 is in range
     random_policy = tf.random.uniform(
         shape=[], minval=0, maxval=number_of_policies, dtype=tf.int32)
 
@@ -128,37 +133,36 @@ def tf_online_augment(image, policy):
         image = tf.cond(tf.equal(random_policy, idx),
                         lambda: apply_sub_policy(image, policy["sub_policy" + str(idx + 1)]),
                         lambda: image)
-
-    # clip values to range [0, 255]
+    # clip values in image
     image = tf.clip_by_value(image, 0.0, 255.0)
 
     return image
 
 
-def apply_sub_policy(input_img, sub_policy):
+def apply_sub_policy(image, sub_policy):
     """
-    Applies a sub-policy to an imput image
-    :param input_img:
+    Applies a sub-policy to an input image
+    :param image:
     :param sub_policy:
     :return:
     """
     # apply first operator of sub_policy
     first_op = sub_policy["op1"]
     op1 = AUGMENTATION_BY_NAME[first_op[0]]  # convert op string to function callable
-    input_img = tf.cond(tf.random.uniform([], 0, 1) > (1. - first_op[1]),
-                        lambda: op1(input_img, first_op[2]),
-                        lambda: input_img)
+    image = tf.cond(tf.random.uniform([], 0, 1) >= (1. - first_op[1]),
+                    lambda: op1(image, first_op[2]),
+                    lambda: image)
 
-    input_img = tf.clip_by_value(input_img, 0.0, 255.0)
+    image = tf.clip_by_value(image, 0.0, 255.0)
 
     # apply second operator of sub_policy
     second_op = sub_policy["op2"]
     op2 = AUGMENTATION_BY_NAME[second_op[0]]  # convert op string to function callable
-    input_img = tf.cond(tf.random.uniform([], 0, 1) > (1. - second_op[1]),
-                        lambda: op2(input_img, second_op[2]),
-                        lambda: input_img)
+    image = tf.cond(tf.random.uniform([], 0, 1) >= (1. - second_op[1]),
+                    lambda: op2(image, second_op[2]),
+                    lambda: image)
 
-    return input_img
+    return image
 
 
 def int_parameter(level, maxval):
@@ -191,11 +195,11 @@ def float_parameter(level, maxval):
 
 # Color Augmentations
 
-def _posterize(tensor, levels):
+def _posterize(image, levels):
     """
     Reduce the number of color levels per channel.
 
-    :param Tensor tensor:
+    :param Tensor image:
     :param int levels:
     :return: Tensor
 
@@ -206,32 +210,31 @@ def _posterize(tensor, levels):
     tensor /= levels
     tensor = tensor * 255.0
     """
-    tensor = tensor * (levels / 255.0)
-    tensor = tf.round(tensor)
-    tensor = tensor * (255.0 / levels)
-    return tensor
+    image = image * (levels / 255.0)
+    image = tf.round(image)
+    image = image * (255.0 / levels)
+    return image
 
-
-def posterize(tensor, level):
+def posterize(image, level):
     level = int_parameter(level, 10)
-    return _posterize(tensor, 16 - level)
+    return _posterize(image, 16 - level)
 
 
-def _solarize(tensor, threshold):
+def _solarize(image, threshold):
     """
     Invert all pixel values above a threshold.
-    :param tensor:
+    :param image:
     :param threshold:
     :return:
     """
-    mask = tf.greater(tensor, threshold * tf.ones_like(tensor))
-    tensor = tf.abs(255.0 * tf.cast(mask, tf.float32) - tensor)
-    return tensor
+    mask = tf.greater(image, threshold * tf.ones_like(image))
+    image = tf.abs(255.0 * tf.cast(mask, tf.float32) - image)
+    return image
 
 
-def solarize(tensor, level):
+def solarize(image, level):
     level = int_parameter(level, 256)
-    return _solarize(tensor, 256 - level)
+    return _solarize(image, 256 - level)
 
 
 def _unbiased_gamma_sampling(image, z_range):
@@ -246,9 +249,9 @@ def _unbiased_gamma_sampling(image, z_range):
     return image
 
 
-def unbiased_gamma_sampling(tensor, level):
+def unbiased_gamma_sampling(image, level):
     level = float_parameter(level, 0.5)
-    return _unbiased_gamma_sampling(tensor, z_range=level)
+    return _unbiased_gamma_sampling(image, z_range=level)
 
 
 def _equalize_histogram(image):
@@ -270,62 +273,62 @@ def _equalize_histogram(image):
     return eq_hist
 
 
-def equalize_histogram(tensor, _):
+def equalize_histogram(image, _):
     # perform clipping to prevent _equalize_histogram from crashing
-    tensor = tf.clip_by_value(tensor, 0, 255)
+    image = tf.clip_by_value(image, 0, 255)
 
-    r = _equalize_histogram(tf.expand_dims(tensor[:, :, 0], -1))
-    g = _equalize_histogram(tf.expand_dims(tensor[:, :, 1], -1))
-    b = _equalize_histogram(tf.expand_dims(tensor[:, :, 2], -1))
-    tensor = tf.squeeze(tf.cast(tf.stack([r, g, b], axis=-2), dtype=tf.float32))
-    return tensor
+    r = _equalize_histogram(tf.expand_dims(image[:, :, 0], -1))
+    g = _equalize_histogram(tf.expand_dims(image[:, :, 1], -1))
+    b = _equalize_histogram(tf.expand_dims(image[:, :, 2], -1))
+    image = tf.squeeze(tf.cast(tf.stack([r, g, b], axis=-2), dtype=tf.float32))
+    return image
 
 
-def invert(tensor, _):
+def invert(image, _):
     """
     Invert all pixel
-    :param tensor:
+    :param image:
     :param _: Level Not used
     :return:
     """
-    tensor = 255.0 - tensor
-    return tensor
+    image = 255.0 - image
+    return image
 
 
-def adjust_brightness(tensor, level):
+def adjust_brightness(image, level):
     level = float_parameter(level, 100)
-    return tf.image.adjust_brightness(tensor, level - 50)
+    return tf.image.adjust_brightness(image, level - 50)
 
 
-def adjust_contrast(tensor, level):
+def adjust_contrast(image, level):
     level = float_parameter(level, 2) + 0.3  # with zero, image is not visible
-    return tf.image.adjust_contrast(tensor, level)
+    return tf.image.adjust_contrast(image, level)
 
 
-def adjust_hue(tensor, level):
+def adjust_hue(image, level):
     level = float_parameter(level, 0.9)
-    return tf.image.adjust_hue(tensor, delta=level)
+    return tf.image.adjust_hue(image, delta=level)
 
 
-def adjust_saturation(tensor, level):
+def adjust_saturation(image, level):
     level = float_parameter(level, 2)
-    return tf.image.adjust_saturation(tensor, saturation_factor=level)
+    return tf.image.adjust_saturation(image, saturation_factor=level)
 
 
-def adjust_gamma(tensor, level):
+def adjust_gamma(image, level):
     level = float_parameter(level, 0.4) + 0.8  # range 0.8 - 1.2
-    return tf.image.adjust_gamma(tensor, gamma=level)
+    return tf.image.adjust_gamma(image, gamma=level)
 
 
-def adjust_jpeg_quality(tensor, level):
+def adjust_jpeg_quality(image, level):
     level = int_parameter(level, 70)
-    return tf.image.adjust_jpeg_quality(tensor / 255.0, level) * 255.0
+    return tf.image.adjust_jpeg_quality(image / 255.0, level) * 255.0
 
 
-def add_noise(tensor, level):
+def add_noise(image, level):
     level = float_parameter(level, 25)
-    noise = tf.random.normal(tf.shape(tensor), mean=0.0, stddev=level, dtype=tf.float32)
-    return tensor + noise
+    noise = tf.random.normal(tf.shape(image), mean=0.0, stddev=level, dtype=tf.float32)
+    return image + noise
 
 
 AUGMENTATION_BY_NAME = {

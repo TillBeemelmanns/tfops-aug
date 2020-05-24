@@ -140,21 +140,19 @@ def apply_sub_policy(image, sub_policy):
     :param sub_policy: Sub-policy consisting of two operations
     :return: Augmented Image
     """
-    # apply first operator of sub_policy
-    first_op = sub_policy["op1"]
-    op1 = AUGMENTATION_BY_NAME[first_op[0]]  # convert op string to function callable
-    image = tf.cond(tf.random.uniform([], 0, 1) >= (1. - first_op[1]),
-                    lambda: op1(image, first_op[2]),
-                    lambda: image)
 
-    image = tf.clip_by_value(image, 0.0, 255.0)
+    for idx in range(len(sub_policy)):
+        operation = sub_policy["op"+str(idx+1)]
 
-    # apply second operator of sub_policy
-    second_op = sub_policy["op2"]
-    op2 = AUGMENTATION_BY_NAME[second_op[0]]  # convert op string to function callable
-    image = tf.cond(tf.random.uniform([], 0, 1) >= (1. - second_op[1]),
-                    lambda: op2(image, second_op[2]),
-                    lambda: image)
+        op_func = AUGMENTATION_BY_NAME[operation[0]]  # convert op string to  callable function
+        prob = operation[1]  # get probability
+        level = operation[2]  # get level of operation
+
+        image = tf.cond(tf.random.uniform([], 0, 1) >= (1. - prob),
+                        lambda: op_func(image, level),
+                        lambda: image)
+        image = tf.clip_by_value(image, 0.0, 255.0)
+
     return image
 
 

@@ -24,5 +24,5 @@ augmentation_policy = { 'sub_policy0': {'op1': ['adjust_saturation', 1, 2],
                         'sub_policy8': {'op1': ['adjust_jpeg_quality', 1, 10],
                                         'op2': ['adjust_hue', 1, 2]},
                         'sub_policy9':{'op1': ['equalize', 1, 0],
-                                        'op2': ['solarize', 1, 6]}}
+                                       'op2': ['solarize', 1, 6]}}
 ```

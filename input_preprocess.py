@@ -1,13 +1,9 @@
 import tensorflow as tf
 import preprocess_utils
 
-# The probability of flipping the images and labels
-# left-right during training
+# Constants
 _PROB_OF_FLIP = 0.5
-
-# Mean pixel value
 _MEAN_PIXEL_VALUE_PAD = [127.5, 127.5, 127.5]
-
 
 def preprocess_image_and_label(image,
                                label,
@@ -22,36 +18,35 @@ def preprocess_image_and_label(image,
                                ignore_label=255,
                                is_training=True):
     """Preprocesses the image and label.
+    Args:
+        image: Input image.
+        label: Ground truth annotation label.
+        crop_height: The height value used to crop the image and label.
+        crop_width: The width value used to crop the image and label.
+        min_resize_value: Desired size of the smaller image side.
+        max_resize_value: Maximum allowed size of the larger image side.
+        resize_factor: Resized dimensions are multiple of factor plus one.
+        min_scale_factor: Minimum scale factor value.
+        max_scale_factor: Maximum scale factor value.
+        scale_factor_step_size: The step size from min scale factor to max scale
+          factor. The input is randomly scaled based on the value of
+          (min_scale_factor, max_scale_factor, scale_factor_step_size).
+        ignore_label: The label value which will be ignored for training and
+          evaluation.
+        is_training: If the preprocessing is used for training or not.
+        model_variant: Model variant (string) for choosing how to mean-subtract the
+          images. See feature_extractor.network_map for supported model variants.
 
-  Args:
-    image: Input image.
-    label: Ground truth annotation label.
-    crop_height: The height value used to crop the image and label.
-    crop_width: The width value used to crop the image and label.
-    min_resize_value: Desired size of the smaller image side.
-    max_resize_value: Maximum allowed size of the larger image side.
-    resize_factor: Resized dimensions are multiple of factor plus one.
-    min_scale_factor: Minimum scale factor value.
-    max_scale_factor: Maximum scale factor value.
-    scale_factor_step_size: The step size from min scale factor to max scale
-      factor. The input is randomly scaled based on the value of
-      (min_scale_factor, max_scale_factor, scale_factor_step_size).
-    ignore_label: The label value which will be ignored for training and
-      evaluation.
-    is_training: If the preprocessing is used for training or not.
-    model_variant: Model variant (string) for choosing how to mean-subtract the
-      images. See feature_extractor.network_map for supported model variants.
+    Returns:
+        original_image: Original image (could be resized).
+        processed_image: Preprocessed image.
+        label: Preprocessed ground truth segmentation label.
 
-  Returns:
-    original_image: Original image (could be resized).
-    processed_image: Preprocessed image.
-    label: Preprocessed ground truth segmentation label.
-
-  Raises:
-    ValueError: Ground truth label not provided during training.
-  """
+    Raises:
+        ValueError: Ground truth label not provided during training.
+    """
     if is_training and label is None:
-        raise ValueError('During training, label must be provided.')
+        raise ValueError('Label not provided, but necessary during training.')
 
     # Keep reference to original image.
     original_image = image
@@ -119,9 +114,9 @@ def preprocess_image_and_label(image,
 def apply_augmentation_policy(image, policy):
     """
     Applies the augmentation policy to the input image.
-    :param image:
-    :param policy:
-    :return:
+    :param image: Image as tf.tensor
+    :param policy: Augmentation policy as JSON
+    :return: Augmented Image
     """
     number_of_policies = len(policy)
 
@@ -131,20 +126,19 @@ def apply_augmentation_policy(image, policy):
     # take all policies and choose random policy based on idx
     for idx in range(number_of_policies):
         image = tf.cond(tf.equal(random_policy, idx),
-                        lambda: apply_sub_policy(image, policy["sub_policy" + str(idx + 1)]),
+                        lambda: apply_sub_policy(image, policy["sub_policy"+str(idx)]),
                         lambda: image)
     # clip values in image
     image = tf.clip_by_value(image, 0.0, 255.0)
-
     return image
 
 
 def apply_sub_policy(image, sub_policy):
     """
     Applies a sub-policy to an input image
-    :param image:
-    :param sub_policy:
-    :return:
+    :param image: Image as tf.tensor
+    :param sub_policy: Sub-policy consisting of two operations
+    :return: Augmented Image
     """
     # apply first operator of sub_policy
     first_op = sub_policy["op1"]
@@ -161,7 +155,6 @@ def apply_sub_policy(image, sub_policy):
     image = tf.cond(tf.random.uniform([], 0, 1) >= (1. - second_op[1]),
                     lambda: op2(image, second_op[2]),
                     lambda: image)
-
     return image
 
 
@@ -194,7 +187,6 @@ def float_parameter(level, maxval):
 
 
 # Color Augmentations
-
 def _posterize(image, levels):
     """
     Reduce the number of color levels per channel.
@@ -203,7 +195,7 @@ def _posterize(image, levels):
     :param int levels:
     :return: Tensor
 
-    Slow, but unterstandable procedure
+    Slow, but understandable procedure
     tensor = tensor / 255.0
     tensor *= levels
     tensor = tf.floor(tensor)
@@ -215,6 +207,7 @@ def _posterize(image, levels):
     image = image * (255.0 / levels)
     return image
 
+
 def posterize(image, level):
     level = int_parameter(level, 10)
     return _posterize(image, 16 - level)
@@ -223,9 +216,9 @@ def posterize(image, level):
 def _solarize(image, threshold):
     """
     Invert all pixel values above a threshold.
-    :param image:
-    :param threshold:
-    :return:
+    :param image: Image as tf.tensor
+    :param threshold: Threshold in [0,255]
+    :return: Solarized Image
     """
     mask = tf.greater(image, threshold * tf.ones_like(image))
     image = tf.abs(255.0 * tf.cast(mask, tf.float32) - image)
@@ -256,7 +249,7 @@ def unbiased_gamma_sampling(image, level):
 
 def _equalize_histogram(image):
     """
-    Source:
+    Based on the implementation in
     https://stackoverflow.com/questions/42835247/how-to-implement-histogram-equalization-for-images-in-tensorflow?rq=1
     """
     values_range = tf.constant([0., 255.], dtype=tf.float32)
@@ -286,10 +279,10 @@ def equalize_histogram(image, _):
 
 def invert(image, _):
     """
-    Invert all pixel
-    :param image:
+    Invert all pixel of the input image
+    :param image: Image as tf.tensor
     :param _: Level Not used
-    :return:
+    :return: Inverted Image
     """
     image = 255.0 - image
     return image

@@ -3,6 +3,7 @@ import os
 import collections
 import glob
 import tensorflow as tf
+import pprint
 
 import input_preprocess
 import common
@@ -134,7 +135,7 @@ class Dataset:
 
         self.num_samples = min(splits_to_sizes[self.split_name], num_samples)
 
-        self.online_augmentation_policy = augmentation_policy
+        self.augmentation_policy = augmentation_policy
 
     def _parse_function(self, example_proto):
         """Function to parse the example proto.
@@ -238,14 +239,15 @@ class Dataset:
             ignore_label=self.ignore_label,
             is_training=self.is_training)
 
-        # perform online augmentation of input image
-        if self.online_augmentation_policy and self.is_training:
-            print("Use Online Augmentation with following Policy:")
-            print(self.online_augmentation_policy)
+        # perform augmentation of input image
+        if self.augmentation_policy and self.is_training:
+            print("Use augmentation with following policy:")
+            pprint.pprint(self.augmentation_policy)
             image = input_preprocess.apply_augmentation_policy(
-                image,
-                policy=self.online_augmentation_policy)
-            image.set_shape([None, None, 3])
+                image=image,
+                policy=self.augmentation_policy)
+
+        image.set_shape([self.crop_size[0], self.crop_size[1], 3])
 
         sample[common.IMAGE] = image
 

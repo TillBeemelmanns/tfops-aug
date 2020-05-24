@@ -128,8 +128,7 @@ def apply_augmentation_policy(image, policy):
         image = tf.cond(tf.equal(random_policy, idx),
                         lambda: apply_sub_policy(image, policy["sub_policy"+str(idx)]),
                         lambda: image)
-    # clip values in image
-    image = tf.clip_by_value(image, 0.0, 255.0)
+
     return image
 
 
@@ -142,7 +141,7 @@ def apply_sub_policy(image, sub_policy):
     """
 
     for idx in range(len(sub_policy)):
-        operation = sub_policy["op"+str(idx+1)]
+        operation = sub_policy["op"+str(idx)]
 
         op_func = AUGMENTATION_BY_NAME[operation[0]]  # convert op string to  callable function
         prob = operation[1]  # get probability

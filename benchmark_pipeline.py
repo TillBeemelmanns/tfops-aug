@@ -19,7 +19,7 @@ if __name__ == '__main__':
                                            'op1': ['adjust_hue', 0.4, 5]},
                            'sub_policy4': {'op0': ['adjust_saturation', 0.2, 9],
                                            'op1': ['add_noise', 0.1, 0]},
-                           'sub_policy5': {'op0': ['adjust_contrast', 16, 1],
+                           'sub_policy5': {'op0': ['adjust_contrast', 1.0, 1],
                                            'op1': ['unbiased_gamma_sampling', 0.4, 9]},
                            'sub_policy6': {'op0': ['unbiased_gamma_sampling', 0.3, 0],
                                            'op1': ['adjust_hue', 0.1, 6]},

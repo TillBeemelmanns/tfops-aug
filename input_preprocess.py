@@ -207,15 +207,15 @@ def _posterize(image, levels):
 
 
 def posterize(image, level):
-    level = int_parameter(level, 10)
-    return _posterize(image, 16 - level)
+    level = 16 - int_parameter(level, 10)
+    return _posterize(image, level)
 
 
 def _solarize(image, threshold):
     """
     Invert all pixel values above a threshold.
     :param image: Image as tf.tensor
-    :param threshold: Threshold in [0,255]
+    :param threshold: Threshold in [0, 255]
     :return: Solarized Image
     """
     mask = tf.constant(255, dtype=tf.int32) * tf.cast(tf.greater(image, threshold * tf.ones_like(image)), dtype=tf.int32)
@@ -224,8 +224,8 @@ def _solarize(image, threshold):
 
 
 def solarize(image, level):
-    level = int_parameter(level, 256)
-    return _solarize(image, 256 - level)
+    level = 250 - int_parameter(level, 250)
+    return _solarize(image, level)
 
 
 def _unbiased_gamma_sampling(image, z_range):
@@ -284,8 +284,8 @@ def invert(image, _):
 
 
 def adjust_brightness(image, level):
-    level = float_parameter(level, 100)
-    return tf.image.adjust_brightness(image, level - 50)
+    level = float_parameter(level, 0.9) - 0.2
+    return tf.image.adjust_brightness(image, level)
 
 
 def adjust_contrast(image, level):
@@ -315,7 +315,7 @@ def adjust_jpeg_quality(image, level):
 
 
 def add_noise(image, level):
-    level = float_parameter(level, 25)
+    level = float_parameter(level, 22) + 3
     image = tf.cast(image, dtype=tf.float32)
     noise = tf.random.normal(tf.shape(image), mean=0.0, stddev=level, dtype=tf.float32)
     return image + noise

@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import time
+import cv2
 
 from data_generator import Dataset
 import common
@@ -42,9 +43,9 @@ if __name__ == '__main__':
         num_parallel_reads=1,
         num_parallel_calls=4,
         is_training=True,
-        should_shuffle=False,
+        should_shuffle=True,
         should_repeat=False,
-        augmentation_policy=augmentation_policy,
+        augmentation_policy=None,
         num_samples=50,
         ignore_label=None
     )
@@ -53,8 +54,8 @@ if __name__ == '__main__':
 
     print(tf_dataset)
 
-    plot = False
-    epochs = 10
+    plot = True
+    epochs = 1
 
     start_time = time.perf_counter()
     for epoch in range(epochs):
@@ -65,6 +66,7 @@ if __name__ == '__main__':
 
             if plot:
                 image = element[common.IMAGE].numpy()[0, :, :, :]
+                # cv2.imwrite("assets/input_image2.jpg", cv2.cvtColor(image, cv2.COLOR_RGB2BGR))
                 plt.imshow(image/255.0)
                 plt.show()
 

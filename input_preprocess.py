@@ -143,14 +143,15 @@ def apply_sub_policy(image, sub_policy):
     for idx in range(len(sub_policy)):
         operation = sub_policy["op"+str(idx)]
 
-        op_func = AUGMENTATION_BY_NAME[operation[0]]  # convert op string to  callable function
+        op_func = AUGMENTATION_BY_NAME[operation[0]]  # convert op string to callable function
         prob = operation[1]  # get probability
         level = operation[2]  # get level of operation
 
         image = tf.cond(tf.random.uniform([], 0, 1) >= (1. - prob),
                         lambda: op_func(image, level),
                         lambda: image)
-        image = tf.clip_by_value(image, 0.0, 255.0)
+        image = tf.cast(image, dtype=tf.int32)  # some devices crash using tf.uint8
+        image = tf.clip_by_value(image, 0, 255)
 
     return image
 
@@ -193,13 +194,13 @@ def _posterize(image, levels):
     :return: Tensor
 
     Slow, but understandable procedure
-    tensor = tensor / 255.0
+    tensor = tensor / 255
     tensor *= levels
     tensor = tf.floor(tensor)
     tensor /= levels
-    tensor = tensor * 255.0
+    tensor = tensor * 255
     """
-    image = image * (levels / 255.0)
+    image = tf.cast(image, dtype=tf.float32) * (levels / 255.0)
     image = tf.round(image)
     image = image * (255.0 / levels)
     return image
@@ -217,8 +218,8 @@ def _solarize(image, threshold):
     :param threshold: Threshold in [0,255]
     :return: Solarized Image
     """
-    mask = tf.greater(image, threshold * tf.ones_like(image))
-    image = tf.abs(255.0 * tf.cast(mask, tf.float32) - image)
+    mask = tf.constant(255, dtype=tf.int32) * tf.cast(tf.greater(image, threshold * tf.ones_like(image)), dtype=tf.int32)
+    image = tf.abs(mask - tf.cast(image, dtype=tf.int32))
     return image
 
 
@@ -231,7 +232,7 @@ def _unbiased_gamma_sampling(image, z_range):
     # Unbiased gamma sampling
     # See Full-Resolution Residual Networks for Semantic Segmentation in Street Scenes
     # CVPR'17 for a discussion on this.
-    scaled_image = image / 255.0
+    scaled_image = tf.cast(image, dtype=tf.float32) / 255.0
     factor = tf.random.uniform(shape=[], minval=-z_range, maxval=z_range, dtype=tf.float32)
     gamma = (tf.math.log(0.5 + 1.0 / tf.sqrt(2.0) * factor) /
              tf.math.log(0.5 - 1.0 / tf.sqrt(2.0) * factor))
@@ -264,9 +265,6 @@ def _equalize_histogram(image):
 
 
 def equalize_histogram(image, _):
-    # perform clipping to prevent _equalize_histogram from crashing
-    image = tf.clip_by_value(image, 0, 255)
-
     r = _equalize_histogram(tf.expand_dims(image[:, :, 0], -1))
     g = _equalize_histogram(tf.expand_dims(image[:, :, 1], -1))
     b = _equalize_histogram(tf.expand_dims(image[:, :, 2], -1))
@@ -281,7 +279,7 @@ def invert(image, _):
     :param _: Level Not used
     :return: Inverted Image
     """
-    image = 255.0 - image
+    image = tf.constant(255, dtype=tf.uint8) - image
     return image
 
 
@@ -312,11 +310,13 @@ def adjust_gamma(image, level):
 
 def adjust_jpeg_quality(image, level):
     level = int_parameter(level, 70)
+    image = tf.cast(image, tf.float32)
     return tf.image.adjust_jpeg_quality(image / 255.0, level) * 255.0
 
 
 def add_noise(image, level):
     level = float_parameter(level, 25)
+    image = tf.cast(image, dtype=tf.float32)
     noise = tf.random.normal(tf.shape(image), mean=0.0, stddev=level, dtype=tf.float32)
     return image + noise
 

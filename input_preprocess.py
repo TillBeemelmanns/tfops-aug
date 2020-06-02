@@ -314,7 +314,7 @@ def adjust_jpeg_quality(image, level):
     return tf.image.adjust_jpeg_quality(image / 255.0, level) * 255.0
 
 
-def add_noise(image, level):
+def add_gaussian_noise(image, level):
     level = float_parameter(level, 22) + 3
     image = tf.cast(image, dtype=tf.float32)
     noise = tf.random.normal(tf.shape(image), mean=0.0, stddev=level, dtype=tf.float32)
@@ -333,7 +333,7 @@ AUGMENTATION_BY_NAME = {
     "adjust_saturation": adjust_saturation,
     "adjust_gamma": adjust_gamma,
     "adjust_jpeg_quality": adjust_jpeg_quality,
-    "add_noise": add_noise
+    "add_noise": add_gaussian_noise
 }
 
 ALL_AUGMENTATION_NAMES = AUGMENTATION_BY_NAME.keys()

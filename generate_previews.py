@@ -1,4 +1,5 @@
 import tensorflow as tf
+import os
 from input_preprocess import *
 import cv2
 
@@ -21,6 +22,7 @@ if __name__ == '__main__':
 
             cv2.imwrite(f"output/{op}_{level}.jpg", img)
 
-
+        os.system(f"convert output/{op}_*.jpg output/{op}.gif")
+        os.system(f"rm output/{op}_*.jpg")
 
 

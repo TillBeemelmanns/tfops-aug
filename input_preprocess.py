@@ -304,7 +304,7 @@ def adjust_saturation(image, level):
 
 
 def adjust_gamma(image, level):
-    level = float_parameter(level, 0.4) + 0.8  # range 0.8 - 1.2
+    level = float_parameter(level, 0.8) + 0.5  # range 0.5 - 1.3
     return tf.image.adjust_gamma(image, gamma=level)
 
 

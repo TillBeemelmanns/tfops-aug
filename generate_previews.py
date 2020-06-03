@@ -20,9 +20,9 @@ if __name__ == '__main__':
             img = cv2.resize(img, (img.shape[1]//4, img.shape[0]//4))
             img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 
-            cv2.imwrite(f"output/{op}_{level}.jpg", img)
+            cv2.imwrite(f"output/{op}_{level+1}.jpg", img)
 
-        os.system(f"convert output/{op}_*.jpg output/{op}.gif")
+        os.system(f"convert $(ls -1 output/{op}_*.jpg | sort -V) output/{op}.gif")
         os.system(f"rm output/{op}_*.jpg")
 
 

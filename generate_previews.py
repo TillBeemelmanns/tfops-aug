@@ -20,7 +20,7 @@ if __name__ == '__main__':
             img = cv2.resize(img, (img.shape[1]//4, img.shape[0]//4))
             img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 
-            cv2.imwrite(f"assets/{op}_{level+1}.jpg", img)
+            cv2.imwrite(f"assets/{op}_{level}.jpg", img)
 
         os.system(f"convert $(ls -1 assets/{op}_*.jpg | sort -V) assets/{op}.gif")
         os.system(f"rm output/{op}_*.jpg")

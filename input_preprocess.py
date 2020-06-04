@@ -114,9 +114,9 @@ def preprocess_image_and_label(image,
 def apply_augmentation_policy(image, policy):
     """
     Applies the augmentation policy to the input image.
-    :param image: Image as tf.tensor
+    :param image: Image as tf.tensor with dtype tf.uint8
     :param policy: Augmentation policy as JSON
-    :return: Augmented Image
+    :return: Augmented Image as tf.tensor with dtype tf.uint8
     """
     number_of_policies = len(policy)
 

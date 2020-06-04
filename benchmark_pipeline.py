@@ -54,8 +54,8 @@ if __name__ == '__main__':
 
     print(tf_dataset)
 
-    plot = True
-    epochs = 1
+    plot = False
+    epochs = 10
 
     start_time = time.perf_counter()
     for epoch in range(epochs):

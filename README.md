@@ -30,3 +30,20 @@ augmentation_policy = {'sub_policy0': {'op0': ['adjust_saturation', 0.2, 2],
                        'sub_policy9': {'op0': ['equalize', 0.6, 0],
                                        'op1': ['solarize', 0.0, 6]}}
 ```
+
+
+| Augmentation   |      Image      |
+|----------|:-------------:|
+| Additive Gaussian Noise | ![](assets/add_noise.gif) |
+| Adjust Brightness | ![](assets/adjust_brightness.gif) |
+| Adjust Contrast | ![](assets/adjust_contrast.gif) |
+| Adjust Gamma | ![](assets/adjust_gamma.gif) |
+| Adjust Hue | ![](assets/adjust_hue.gif) |
+| Adjust JPEG Quality | ![](assets/adjust_jpeg_quality.gif) |
+| Adjust Saturation | ![](assets/adjust_saturation.gif) |
+| Histogramm Equalization | ![](assets/equalize.gif) |
+| Invert | ![](assets/invert.gif) |
+| Posterize | ![](assets/posterize.gif) |
+| Solarize | ![](assets/solarize.gif) |
+| Unbiased Gamma Sampling | ![](assets/unbiased_gamma_sampling.gif) |
+

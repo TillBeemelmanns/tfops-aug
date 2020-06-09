@@ -1,4 +1,4 @@
-# Implementation of Google's Auto-Augmentation based on TF2 Operations
+# WIP: Implementation of Google's Auto-Augmentation based on TF2 Operations
 
 Exemplary implementation for learning augmentation policies from your data distribution. The augmentation operations 
 rely solely on tf operations which allows scalability and high computational throughput even on large images.

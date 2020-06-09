@@ -26,10 +26,9 @@ def apply_sub_policy(image, sub_policy):
     """
     Applies a sub-policy to an input image
     :param image: Image as tf.tensor
-    :param sub_policy: Sub-policy consisting of two operations
-    :return: Augmented Image
+    :param sub_policy: Sub-policy consisting of at least one operation
+    :return: Augmented Image as tf.tensor (tf.int32)
     """
-
     for idx in range(len(sub_policy)):
         operation = sub_policy["op"+str(idx)]
 
@@ -40,7 +39,8 @@ def apply_sub_policy(image, sub_policy):
         image = tf.cond(tf.random.uniform([], 0, 1) >= (1. - prob),
                         lambda: op_func(image, level),
                         lambda: image)
-        image = tf.cast(image, dtype=tf.int32)  # some devices crash using tf.uint8
+        # some devices crash using tf.uint8
+        image = tf.cast(image, dtype=tf.int32)
         image = tf.clip_by_value(image, 0, 255)
 
     return image
@@ -167,7 +167,7 @@ def invert(image, _):
     Invert all pixel of the input image
     :param image: Image as tf.tensor
     :param _: Level Not used
-    :return: Inverted Image
+    :return: Inverted Image as tf.uint8
     """
     image = tf.constant(255, dtype=tf.uint8) - image
     return image

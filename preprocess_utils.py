@@ -23,6 +23,7 @@ import tensorflow as tf
 _PROB_OF_FLIP = 0.5
 _MEAN_PIXEL_VALUE_PAD = [127.5, 127.5, 127.5]
 
+
 def flip_dim(tensor_list, prob=0.5, dim=1):
     """Randomly flips a dimension of the given tensor.
 

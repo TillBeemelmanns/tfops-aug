@@ -24,7 +24,7 @@ if __name__ == '__main__':
         is_training=True,
         should_shuffle=True,
         should_repeat=False,
-        augmentation_policy=None,
+        augmentation_policy=augmentation_policy,
         num_samples=50,
         ignore_label=None
     )

@@ -1,11 +1,11 @@
-# WIP: Implementation of Google's Auto-Augmentation based on TF2 Operations
+# WIP: Implementation of Google's Auto-Augmentation based on TF2 OPS
 
 Exemplary implementation for learning augmentation policies from your training data distribution. The augmentation operations 
 rely solely on tf operations which allows scalability and high computational throughput even on large images. Hence, they
 can be used easily with the tf.data API.
 
 
-### Example for an augmentation policy.
+### Example for an augmentation policy
 ```python
 augmentation_policy = {'sub_policy0': {'op0': ['adjust_saturation', 0.2, 2],
                                        'op1': ['equalize', 0.1, 6],
@@ -30,8 +30,9 @@ augmentation_policy = {'sub_policy0': {'op0': ['adjust_saturation', 0.2, 2],
                                        'op1': ['solarize', 0.0, 6]}}
 ```
 Similar to Google Autoaugment, the augmentation policy consists of several subpolicies, which in turn consists of 
-augmentation operations. Each operation is defined as a tuple of augmentation method, probability and intensity. Several
-operations within one subpolicy are applied in sequence. The augmentation policy from above would result in the following:
+augmentation operations. Each operation is defined as a tuple of **augmentation method**, 
+**probability** and **intensity**. Several operations within one subpolicy are applied in sequence. 
+The augmentation policy from above would result in the following:
  
 ![](assets/augmentation_policy.gif)
 
@@ -53,4 +54,14 @@ future.
 | Posterize | ![](assets/posterize.gif) |
 | Solarize | ![](assets/solarize.gif) |
 | Unbiased Gamma Sampling | ![](assets/unbiased_gamma_sampling.gif) |
+| Gaußian Blur | ![](assets/gaussian_blur.gif) |
+| Sharpen | ![](assets/sharpen.gif) |
+
+
+### TODO
+- [ ] Implement more Augmentation Methods
+- [ ] Implement augmentation policy search with Ray Tune
+- [ ] Clean up Code (Unified Docstrings)
+- [ ] Benchmark augmentation methods
+ 
 

@@ -29,7 +29,15 @@ augmentation_policy = {'sub_policy0': {'op0': ['adjust_saturation', 0.2, 2],
                        'sub_policy9': {'op0': ['equalize', 0.6, 0],
                                        'op1': ['solarize', 0.0, 6]}}
 ```
+Similar to Google Autoaugment, the augmentation policy consists of several subpolicies, which in turn consists of 
+augmentation operations. Each operation is defined as a tuple of augmentation method, probability and intensity. Several
+operations within one subpolicy are applied in sequence. The augmentation policy from above would result in the following:
+ 
+![](assets/augmentation_policy.gif)
 
+### Augmentation Methods
+A list of all implemented augmentation techniques is given here. Additional, methods will be implemented in the near 
+future.
 
 | Augmentation   |      Image      |
 |----------|:-------------:|

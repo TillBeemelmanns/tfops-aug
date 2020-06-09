@@ -137,13 +137,13 @@ def _gaussian_blur(image, level, sigma=3) -> tf.Tensor:
     # Tile across channel dimension.
     kernel = tf.tile(kernel, [1, 1, 3, 1])
     strides = [1, 1, 1, 1]
-    image = tf.nn.depthwise_conv2d(
+    convolved = tf.nn.depthwise_conv2d(
         image, kernel, strides, padding="SAME", dilations=[1, 1]
     )
-    image = tf.clip_by_value(image, 0.0, 255.0)
-    image = tf.squeeze(tf.cast(image, image_dtype), [0])
+    convolved = tf.clip_by_value(convolved, 0.0, 255.0)
+    convolved = tf.squeeze(tf.cast(convolved, image_dtype), [0])
 
-    return tf.cast(image, image_dtype)
+    return tf.cast(convolved, image_dtype)
 
 
 def gaussian_blur(image, level) -> tf.Tensor:

@@ -1,6 +1,6 @@
 import numpy as np
 import cv2
-from input_preprocess import *
+from augmentation_operations import *
 
 import unittest
 

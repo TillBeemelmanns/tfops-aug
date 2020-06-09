@@ -1,6 +1,6 @@
 import tensorflow as tf
 import os
-from input_preprocess import *
+from augmentation_operations import *
 import cv2
 
 if __name__ == '__main__':

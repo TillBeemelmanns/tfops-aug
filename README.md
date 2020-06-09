@@ -1,12 +1,11 @@
 # WIP: Implementation of Google's Auto-Augmentation based on TF2 Operations
 
-Exemplary implementation for learning augmentation policies from your data distribution. The augmentation operations 
-rely solely on tf operations which allows scalability and high computational throughput even on large images.
- 
-tf.data API
+Exemplary implementation for learning augmentation policies from your training data distribution. The augmentation operations 
+rely solely on tf operations which allows scalability and high computational throughput even on large images. Hence, they
+can be used easily with the tf.data API.
 
-Example for an augmentation policy.
 
+### Example for an augmentation policy.
 ```python
 augmentation_policy = {'sub_policy0': {'op0': ['adjust_saturation', 0.2, 2],
                                        'op1': ['equalize', 0.1, 6],

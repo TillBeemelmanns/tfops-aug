@@ -5,10 +5,12 @@ import glob
 import tensorflow as tf
 import pprint
 
-import input_preprocess
+import augmentation_operations
 import common
 
 # Named tuple to describe the dataset properties.
+import preprocess_utils
+
 DatasetDescriptor = collections.namedtuple(
     'DatasetDescriptor',
     [
@@ -225,7 +227,7 @@ class Dataset:
         image = sample[common.IMAGE]
         label = sample[common.LABELS_CLASS]
 
-        original_image, image, label = input_preprocess.preprocess_image_and_label(
+        original_image, image, label = preprocess_utils.preprocess_image_and_label(
             image=image,
             label=label,
             crop_height=self.crop_size[0],
@@ -243,7 +245,7 @@ class Dataset:
         if self.augmentation_policy and self.is_training:
             print("Use augmentation with following policy:")
             pprint.pprint(self.augmentation_policy)
-            image = input_preprocess.apply_augmentation_policy(
+            image = augmentation_operations.apply_augmentation_policy(
                 image=image,
                 policy=self.augmentation_policy)
 

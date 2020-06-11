@@ -76,7 +76,7 @@ def float_parameter(level, maxval) -> float:
 
 
 # Kernel Augmentations
-def _sharpness(image, level) -> tf.Tensor:
+def _sharpen(image, level) -> tf.Tensor:
     """
     Implements Sharpening Function
     :param image:
@@ -84,11 +84,9 @@ def _sharpness(image, level) -> tf.Tensor:
     :return:
     """
     orig_image = image
-    image_dtype = image.dtype
     # Make image 4D for conv operation.
     image = tf.expand_dims(image, 0)
 
-    image = tf.cast(image, tf.float32)
     kernel = (
         tf.constant(
             [[0, -1, 0], [-1, 5, -1], [0, -1, 0]], dtype=tf.float32, shape=[3, 3, 1, 1]
@@ -104,15 +102,15 @@ def _sharpness(image, level) -> tf.Tensor:
         image, kernel, strides, padding="SAME", dilations=[1, 1]
     )
     convolved = tf.clip_by_value(convolved, 0.0, 255.0)
-    convolved = tf.squeeze(tf.cast(convolved, image_dtype), [0])
+    convolved = tf.squeeze(convolved, [0])
 
     blended = blend(convolved, orig_image, level)
-    return tf.cast(blended, image_dtype)
+    return blended
 
 
 def sharpen(image, level) -> tf.Tensor:
     level = float_parameter(level, 4.5) + 1.5
-    return _sharpness(image, level)
+    return _sharpen(image, level)
 
 
 def _gaussian_blur(image, level, sigma=3) -> tf.Tensor:
@@ -122,11 +120,8 @@ def _gaussian_blur(image, level, sigma=3) -> tf.Tensor:
     :param level:
     :return:
     """
-    image_dtype = image.dtype
     # Make image 4D for conv operation.
     image = tf.expand_dims(image, 0)
-
-    image = tf.cast(image, tf.float32)
 
     kernel_size = level
     x = tf.range(-kernel_size // 2 + 1, kernel_size // 2 + 1, dtype=tf.float32)
@@ -142,9 +137,9 @@ def _gaussian_blur(image, level, sigma=3) -> tf.Tensor:
         image, kernel, strides, padding="SAME", dilations=[1, 1]
     )
     convolved = tf.clip_by_value(convolved, 0.0, 255.0)
-    convolved = tf.squeeze(tf.cast(convolved, image_dtype), [0])
+    convolved = tf.squeeze(convolved, [0])
 
-    return tf.cast(convolved, image_dtype)
+    return convolved
 
 
 def gaussian_blur(image, level) -> tf.Tensor:
@@ -186,8 +181,8 @@ def _solarize(image, threshold) -> tf.Tensor:
     :param threshold: Threshold in [0, 255]
     :return: Solarized Image
     """
-    mask = tf.constant(255.0, dtype=tf.float32) * tf.cast(tf.greater(image, threshold * tf.ones_like(image)), dtype=tf.float32)
-    image = tf.abs(mask - image)
+    mask = tf.constant(255, dtype=tf.uint8) * tf.cast(tf.greater(image, threshold * tf.ones_like(image)), dtype=tf.uint8)
+    image = tf.abs(tf.cast(mask, dtype=tf.float32) - image)
     return image
 
 
@@ -251,14 +246,14 @@ def invert(image, _) -> tf.Tensor:
     Invert all pixel of the input image
     :param image: Image as tf.tensor
     :param _: Level Not used
-    :return: Inverted Image as tf.uint8
+    :return: Inverted Image as tf.float32
     """
-    image = tf.constant(255, dtype=tf.uint8) - image
+    image = tf.constant(255.0, dtype=tf.float32) - image
     return image
 
 
 def adjust_brightness(image, level) -> tf.Tensor:
-    level = float_parameter(level, 0.9) - 0.2
+    level = int_parameter(level, 180)
     return tf.image.adjust_brightness(image, level)
 
 
@@ -290,7 +285,6 @@ def adjust_jpeg_quality(image, level) -> tf.Tensor:
 
 def add_gaussian_noise(image, level) -> tf.Tensor:
     level = float_parameter(level, 22) + 3
-    image = tf.cast(image, dtype=tf.float32)
     noise = tf.random.normal(tf.shape(image), mean=0.0, stddev=level, dtype=tf.float32)
     return image + noise
 

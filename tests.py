@@ -16,7 +16,7 @@ class TestDerivativeMethods(unittest.TestCase):
             subpolicy['op0'] = [op, 1, 10]
             augmentation_policy['sub_policy0'] = subpolicy
             img = tf.convert_to_tensor(img_org)
-            img = tf.cast(img, dtype=tf.uint8)
+            img = tf.cast(img, dtype=tf.float32)
             img = apply_augmentation_policy(img, augmentation_policy)
             img = img.numpy()
 
@@ -50,7 +50,7 @@ class TestDerivativeMethods(unittest.TestCase):
 
         img_org = cv2.cvtColor(cv2.imread("assets/test_image.jpg"), cv2.COLOR_BGR2RGB)
         img = tf.convert_to_tensor(img_org)
-        img = tf.cast(img, dtype=tf.uint8)
+        img = tf.cast(img, dtype=tf.float32)
         img = apply_augmentation_policy(img, policy)
         img = img.numpy()
 

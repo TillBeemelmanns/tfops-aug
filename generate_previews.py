@@ -14,7 +14,7 @@ def generate_all_augmentation_gifs(image):
             subpolicy['op0'] = [op, 1.0, level]
             augmentation_policy['sub_policy0'] = subpolicy
             img = tf.convert_to_tensor(image)
-            img = tf.cast(img, dtype=tf.uint8)
+            img = tf.cast(img, dtype=tf.float32)
             img = apply_augmentation_policy(img, augmentation_policy)
             img = img.numpy().astype(dtype='uint8')
             img = cv2.resize(img, (img.shape[1]//4, img.shape[0]//4))
@@ -27,7 +27,9 @@ def generate_all_augmentation_gifs(image):
 
 def generate_augmentation_policy_gif(image, policy):
     for i in range(20):
-        img = apply_augmentation_policy(image, policy)
+        img = tf.convert_to_tensor(image)
+        img = tf.cast(img, dtype=tf.float32)
+        img = apply_augmentation_policy(img, policy)
         img = img.numpy().astype(dtype='uint8')
         img = cv2.resize(img, (img.shape[1]//4, img.shape[0]//4))
         img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)

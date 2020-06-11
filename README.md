@@ -54,7 +54,7 @@ future.
 | Posterize | ![](assets/posterize.gif) |
 | Solarize | ![](assets/solarize.gif) |
 | Unbiased Gamma Sampling | ![](assets/unbiased_gamma_sampling.gif) |
-| Gaußian Blur | ![](assets/gaussian_blur.gif) |
+| Gaussian Blur | ![](assets/gaussian_blur.gif) |
 | Sharpen | ![](assets/sharpen.gif) |
 
 

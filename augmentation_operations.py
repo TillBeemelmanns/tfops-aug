@@ -1,13 +1,15 @@
 import tensorflow as tf
 from preprocess_utils import blend
 
+
 def apply_augmentation_policy(image, policy) -> tf.Tensor:
     """
     Applies the augmentation policy to the input image.
-    :param image: Image as tf.tensor with dtype tf.uint8 and shape [h, w, 3]
+    :param image: Image as tf.tensor with shape [h, w, 3]
     :param policy: Augmentation policy as dict
-    :return: Augmented Image as tf.tensor with dtype tf.uint8
+    :return: Augmented Image as tf.tensor with dtype tf.float32
     """
+
     num_policies = len(policy)
 
     random_policy = tf.random.uniform(
@@ -25,9 +27,9 @@ def apply_augmentation_policy(image, policy) -> tf.Tensor:
 def apply_sub_policy(image, sub_policy) -> tf.Tensor:
     """
     Applies a sub-policy to an input image
-    :param image: Image as tf.tensor
+    :param image: Image as tf.tensor (tf.float32)
     :param sub_policy: Sub-policy consisting of at least one operation
-    :return: Augmented Image as tf.tensor (tf.int32)
+    :return: Augmented Image as tf.tensor (tf.float32)
     """
     for idx in range(len(sub_policy)):
         operation = sub_policy["op"+str(idx)]
@@ -39,9 +41,8 @@ def apply_sub_policy(image, sub_policy) -> tf.Tensor:
         image = tf.cond(tf.random.uniform([], 0, 1) >= (1. - prob),
                         lambda: op_func(image, level),
                         lambda: image)
-        # some devices crash using tf.uint8
-        image = tf.cast(image, dtype=tf.int32)
-        image = tf.clip_by_value(image, 0, 255)
+        image = tf.cast(image, dtype=tf.float32)
+        image = tf.clip_by_value(image, 0.0, 255.0)
 
     return image
 
@@ -185,8 +186,8 @@ def _solarize(image, threshold) -> tf.Tensor:
     :param threshold: Threshold in [0, 255]
     :return: Solarized Image
     """
-    mask = tf.constant(255, dtype=tf.int32) * tf.cast(tf.greater(image, threshold * tf.ones_like(image)), dtype=tf.int32)
-    image = tf.abs(mask - tf.cast(image, dtype=tf.int32))
+    mask = tf.constant(255.0, dtype=tf.float32) * tf.cast(tf.greater(image, threshold * tf.ones_like(image)), dtype=tf.float32)
+    image = tf.abs(mask - image)
     return image
 
 

@@ -1,9 +1,8 @@
-# WIP: Implementation of Google's Auto-Augmentation based on TF2 OPS
+# Implementation of Google's Auto-Augmentation based on TF2 OPS
 
-Exemplary implementation for learning augmentation policies from your training data distribution. The augmentation operations 
-rely solely on tf operations which allows scalability and high computational throughput even on large images. Hence, they
-can be used easily with the tf.data API.
-
+Exemplary implementation for learning augmentation policies from your training data distribution. The augmentation
+operations rely on Tf2 operations which allows scalability and high computational throughput even on large images. 
+Furthermore, the augmentation pipeline can be easily integrated into the tf.data API.
 
 ### Example for an augmentation policy
 ```python
@@ -29,8 +28,8 @@ augmentation_policy = {'sub_policy0': {'op0': ['adjust_saturation', 0.2, 2],
                        'sub_policy9': {'op0': ['equalize', 0.6, 0],
                                        'op1': ['solarize', 0.0, 6]}}
 ```
-Similar to Google Autoaugment, the augmentation policy consists of several subpolicies, which in turn consists of 
-augmentation operations. Each operation is defined as a tuple of **augmentation method**, 
+Similar to Google's AutoAugment, a single augmentation policy consists of several subpolicies, which inturn consists of one or more 
+augmentation operation. Each operation is defined as a tuple of **augmentation method**, 
 **probability** and **intensity**. Several operations within one subpolicy are applied in sequence. 
 The augmentation policy from above would result in the following:
  
@@ -59,9 +58,12 @@ future.
 
 
 ### TODO
-- [ ] Implement more Augmentation Methods
+- [ ] More Augmentation Methods
+    - [ ] Shear X
+    - [ ] Shear Y
+    - [ ] Random Translation
+- [ ] Implement Learning Pipeline
 - [ ] Implement augmentation policy search with Ray Tune
 - [ ] Clean up Code (Unified Docstrings)
-- [ ] Benchmark augmentation methods
- 
+
 

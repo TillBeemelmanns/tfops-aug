@@ -37,7 +37,8 @@ The augmentation policy from above would result in the following:
 
 ### Augmentation Methods
 A list of all implemented augmentation techniques is given here. Additional, methods will be implemented in the near 
-future. Performance is measured with the `test_image.jpg` which has size `2048 x 1024`
+future. Performance is measured with the `test_image.jpg` which has size `2048 x 1024`. All augmentation methods are 
+executed with `level=5`. Averaged over 500 samples on the Intel Core i7 Prozessor 8665U.
 
 | Augmentation   |      Image      |   Performance (per Image)   |
 |----------|:-------------|:-------------:|

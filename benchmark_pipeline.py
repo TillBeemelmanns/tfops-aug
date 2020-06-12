@@ -57,13 +57,14 @@ def tf_dataset_pipline():
 
 
 def measure_each_augmentation_method():
+    n_times = 500
     img_org = cv2.cvtColor(cv2.imread("assets/test_image.jpg"), cv2.COLOR_BGR2RGB)
 
     time_per_augmentation = {}
 
     for op in ALL_AUGMENTATION_NAMES_AS_LIST:
         start_time = time.perf_counter()
-        for _ in range(100):
+        for _ in range(n_times):
             augmentation_policy = {}
             subpolicy = {}
             subpolicy['op0'] = [op, 1, 5]
@@ -73,7 +74,7 @@ def measure_each_augmentation_method():
             img = apply_augmentation_policy(img, augmentation_policy)
             img = img.numpy()
 
-        time_per_augmentation[op] = time.perf_counter() - start_time
+        time_per_augmentation[op] = (time.perf_counter() - start_time) / n_times
 
     print(time_per_augmentation)
 

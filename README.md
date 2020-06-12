@@ -37,24 +37,24 @@ The augmentation policy from above would result in the following:
 
 ### Augmentation Methods
 A list of all implemented augmentation techniques is given here. Additional, methods will be implemented in the near 
-future.
+future. Performance is measured with the `test_image.jpg` which has size `2048 x 1024`
 
-| Augmentation   |      Image      |
-|----------|:-------------:|
-| Additive Gaussian Noise | ![](assets/add_noise.gif) |
-| Adjust Brightness | ![](assets/adjust_brightness.gif) |
-| Adjust Contrast | ![](assets/adjust_contrast.gif) |
-| Adjust Gamma | ![](assets/adjust_gamma.gif) |
-| Adjust Hue | ![](assets/adjust_hue.gif) |
-| Adjust JPEG Quality | ![](assets/adjust_jpeg_quality.gif) |
-| Adjust Saturation | ![](assets/adjust_saturation.gif) |
-| Histogramm Equalization | ![](assets/equalize.gif) |
-| Invert | ![](assets/invert.gif) |
-| Posterize | ![](assets/posterize.gif) |
-| Solarize | ![](assets/solarize.gif) |
-| Unbiased Gamma Sampling | ![](assets/unbiased_gamma_sampling.gif) |
-| Gaussian Blur | ![](assets/gaussian_blur.gif) |
-| Sharpen | ![](assets/sharpen.gif) |
+| Augmentation   |      Image      |   Performance (per Image)   |
+|----------|:-------------|:-------------:|
+| Additive Gaussian Noise | ![](assets/add_noise.gif) | 0.05 s |
+| Adjust Brightness | ![](assets/adjust_brightness.gif) | 0.02 s |
+| Adjust Contrast | ![](assets/adjust_contrast.gif) | 0.03 s |
+| Adjust Gamma | ![](assets/adjust_gamma.gif) | 0.04 s |
+| Adjust Hue | ![](assets/adjust_hue.gif) | 0.02 s |
+| Adjust JPEG Quality | ![](assets/adjust_jpeg_quality.gif) | 0.05 s |
+| Adjust Saturation | ![](assets/adjust_saturation.gif) | 0.02 s |
+| Histogramm Equalization | ![](assets/equalize.gif) | 0.05 s |
+| Invert | ![](assets/invert.gif) | 0.02 s |
+| Posterize | ![](assets/posterize.gif) | 0.02 s |
+| Solarize | ![](assets/solarize.gif) | 0.03 s |
+| Unbiased Gamma Sampling | ![](assets/unbiased_gamma_sampling.gif) | 0.04 s |
+| Gaussian Blur | ![](assets/gaussian_blur.gif) | 0.78 s |
+| Sharpen | ![](assets/sharpen.gif) | 0.13 s |
 
 
 ### TODO

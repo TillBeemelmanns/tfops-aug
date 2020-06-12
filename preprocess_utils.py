@@ -15,8 +15,6 @@
 # ==============================================================================
 
 """Utility functions related to preprocessing inputs."""
-from six.moves import range
-from six.moves import zip
 import tensorflow as tf
 
 # Constants

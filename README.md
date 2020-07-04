@@ -68,6 +68,7 @@ executed with `level=5`. Averaged over 500 samples on the Intel Core i7 Prozesso
     - [X] Translate X
     - [X] Translate Y
     - [ ] Random Translation
+    - [ ] Random Rotation
 - [ ] Implement Learning Pipeline
 - [ ] Implement augmentation policy search with Ray Tune
 - [ ] Clean up Code (Unified Docstrings)

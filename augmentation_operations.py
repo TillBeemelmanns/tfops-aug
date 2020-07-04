@@ -1,5 +1,7 @@
 import tensorflow as tf
-from preprocess_utils import blend
+import tensorflow_addons as tfa
+
+import common
 
 
 def apply_augmentation_policy(image, policy) -> tf.Tensor:
@@ -9,7 +11,6 @@ def apply_augmentation_policy(image, policy) -> tf.Tensor:
     :param policy: Augmentation policy as dict
     :return: Augmented Image as tf.tensor with dtype tf.float32
     """
-
     num_policies = len(policy)
 
     random_policy = tf.random.uniform(
@@ -104,7 +105,7 @@ def _sharpen(image, level) -> tf.Tensor:
     convolved = tf.clip_by_value(convolved, 0.0, 255.0)
     convolved = tf.squeeze(convolved, [0])
 
-    blended = blend(convolved, orig_image, level)
+    blended = tfa.image.blend(convolved, orig_image, level)
     return blended
 
 
@@ -289,6 +290,54 @@ def add_gaussian_noise(image, level) -> tf.Tensor:
     return image + noise
 
 
+# Shape Augmentations
+def _shear_x(image, level) -> tf.Tensor:
+    image = tfa.image.shear_x(
+        tf.cast(image, dtype=tf.uint8), level, common.PIXEL_VALUE_PAD)
+    return image
+
+def shear_x(image, level) -> tf.Tensor:
+    level = float_parameter(level, 0.75) - 0.75/2
+    image = _shear_x(image, level)
+    return image
+
+def _shear_y(image, level) -> tf.Tensor:
+    image = tfa.image.shear_y(
+        tf.cast(image, dtype=tf.uint8), level, common.PIXEL_VALUE_PAD)
+    return image
+
+def shear_y(image, level) -> tf.Tensor:
+    level = float_parameter(level, 0.75) - 0.75/2
+    image = _shear_y(image, level)
+    return image
+
+def _translate_x(image, level) -> tf.Tensor:
+    image = tfa.image.translate_xy(
+        tf.cast(image, dtype=tf.uint8),
+        [level, 0],
+        common.PIXEL_VALUE_PAD
+    )
+    return image
+
+def translate_x(image, level) -> tf.Tensor:
+    level = int_parameter(level, 300) - 150
+    image = _translate_x(image, level)
+    return image
+
+def _translate_y(image, level) -> tf.Tensor:
+    image = tfa.image.translate_xy(
+        tf.cast(image, dtype=tf.uint8),
+        [0, level],
+        common.PIXEL_VALUE_PAD
+    )
+    return image
+
+def translate_y(image, level) -> tf.Tensor:
+    level = int_parameter(level, 300) - 150
+    image = _translate_y(image, level)
+    return image
+
+
 AUGMENTATION_BY_NAME = {
     "sharpen": sharpen,
     "gaussian_blur": gaussian_blur,
@@ -303,7 +352,11 @@ AUGMENTATION_BY_NAME = {
     "adjust_saturation": adjust_saturation,
     "adjust_gamma": adjust_gamma,
     "adjust_jpeg_quality": adjust_jpeg_quality,
-    "add_noise": add_gaussian_noise
+    "add_noise": add_gaussian_noise,
+    "shear_x": shear_x,
+    "shear_y": shear_y,
+    "translate_x": translate_x,
+    "translate_y": translate_y
 }
 
 ALL_AUGMENTATION_NAMES = AUGMENTATION_BY_NAME.keys()

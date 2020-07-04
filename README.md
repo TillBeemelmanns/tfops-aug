@@ -56,15 +56,18 @@ executed with `level=5`. Averaged over 500 samples on the Intel Core i7 Prozesso
 | Unbiased Gamma Sampling | ![](assets/unbiased_gamma_sampling.gif) | 0.04 s |
 | Gaussian Blur | ![](assets/gaussian_blur.gif) | 0.78 s |
 | Sharpen | ![](assets/sharpen.gif) | 0.13 s |
-
+| Shear X | ![](assets/shear_x.gif) | 0.06 s |
+| Shear Y | ![](assets/shear_y.gif) | 0.06 s |
+| Translate X | ![](assets/translate_x.gif) | 0.09 s |
+| Translate Y | ![](assets/translate_y.gif) | 0.09 s |
 
 ### TODO
 - [ ] More Augmentation Methods
-    - [ ] Shear X
-    - [ ] Shear Y
+    - [X] Shear X
+    - [X] Shear Y
+    - [X] Translate X
+    - [X] Translate Y
     - [ ] Random Translation
 - [ ] Implement Learning Pipeline
 - [ ] Implement augmentation policy search with Ray Tune
 - [ ] Clean up Code (Unified Docstrings)
-
-

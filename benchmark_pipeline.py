@@ -1,8 +1,8 @@
 import tensorflow as tf
-import numpy as np
 import matplotlib.pyplot as plt
 import time
 import cv2
+import pprint
 
 from data_generator import Dataset
 import common
@@ -10,7 +10,8 @@ import common
 from augmentation_operations import ALL_AUGMENTATION_NAMES_AS_LIST, apply_augmentation_policy
 from augmentation_policies import augmentation_policy
 
-def tf_dataset_pipline():
+
+def tf_dataset_pipeline():
 
     dataset = Dataset(
         dataset_name="test_dataset",
@@ -56,15 +57,19 @@ def tf_dataset_pipline():
     print("Execution time:", time.perf_counter() - start_time)
 
 
-def measure_each_augmentation_method():
-    n_times = 500
-    img_org = cv2.cvtColor(cv2.imread("assets/test_image.jpg"), cv2.COLOR_BGR2RGB)
+def measure_each_augmentation_method(iterations_per_augmentation=100):
+    """
+
+    :param iterations_per_augmentation:
+    :return:
+    """
+    img_org = cv2.cvtColor(cv2.imread(common.TEST_IMAGE_PATH), cv2.COLOR_BGR2RGB)
 
     time_per_augmentation = {}
 
     for op in ALL_AUGMENTATION_NAMES_AS_LIST:
         start_time = time.perf_counter()
-        for _ in range(n_times):
+        for _ in range(iterations_per_augmentation):
             augmentation_policy = {}
             subpolicy = {}
             subpolicy['op0'] = [op, 1, 5]
@@ -72,13 +77,13 @@ def measure_each_augmentation_method():
             img = tf.convert_to_tensor(img_org)
             img = tf.cast(img, dtype=tf.float32)
             img = apply_augmentation_policy(img, augmentation_policy)
-            img = img.numpy()
+            _ = img.numpy()
 
-        time_per_augmentation[op] = (time.perf_counter() - start_time) / n_times
+        time_per_augmentation[op] = (time.perf_counter() - start_time) / iterations_per_augmentation
 
-    print(time_per_augmentation)
+    pprint.pprint(time_per_augmentation)
+
 
 if __name__ == '__main__':
-    tf_dataset_pipline()
+    tf_dataset_pipeline()
     measure_each_augmentation_method()
-

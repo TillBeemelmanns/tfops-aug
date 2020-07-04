@@ -4,7 +4,7 @@ import cv2
 from augmentation_operations import *
 from augmentation_policies import augmentation_policy
 
-from common import TEST_IMAGE_PATH
+import common
 
 
 def generate_all_augmentation_gifs(image):
@@ -42,7 +42,7 @@ def generate_augmentation_policy_gif(image, policy):
 
 
 if __name__ == '__main__':
-    img_org = cv2.cvtColor(cv2.imread(TEST_IMAGE_PATH), cv2.COLOR_BGR2RGB)
+    img_org = cv2.cvtColor(cv2.imread(common.TEST_IMAGE_PATH), cv2.COLOR_BGR2RGB)
     generate_augmentation_policy_gif(img_org, augmentation_policy)
     generate_all_augmentation_gifs(img_org)
 

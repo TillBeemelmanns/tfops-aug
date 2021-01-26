@@ -7,7 +7,6 @@ from augmentation_policies import *
 
 
 class TestDerivativeMethods(unittest.TestCase):
-
     def test_all_augmentations(self):
         img_org = cv2.cvtColor(cv2.imread("assets/test_image.jpg"), cv2.COLOR_BGR2RGB)
 
@@ -25,7 +24,6 @@ class TestDerivativeMethods(unittest.TestCase):
             self.assertGreaterEqual(np.min(img), 0)
             self.assertLessEqual(np.max(img), 255)
 
-
     def test_augmentation_policy(self):
         img_org = cv2.cvtColor(cv2.imread("assets/test_image.jpg"), cv2.COLOR_BGR2RGB)
         img = tf.convert_to_tensor(img_org)
@@ -36,6 +34,7 @@ class TestDerivativeMethods(unittest.TestCase):
         self.assertEqual(img.shape, img_org.shape)
         self.assertGreaterEqual(np.min(img), 0)
         self.assertLessEqual(np.max(img), 255)
+
 
 if __name__ == '__main__':
     unittest.main()

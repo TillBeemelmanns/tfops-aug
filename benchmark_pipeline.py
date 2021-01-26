@@ -12,7 +12,6 @@ from augmentation_policies import augmentation_policy
 
 
 def tf_dataset_pipeline():
-
     dataset = Dataset(
         dataset_name="test_dataset",
         split_name="train",

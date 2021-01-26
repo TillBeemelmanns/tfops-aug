@@ -54,8 +54,8 @@ executed with `level=5`. Averaged over 500 samples on the Intel Core i7 Prozesso
 | Posterize | ![](assets/posterize.gif) | 0.02 s |
 | Solarize | ![](assets/solarize.gif) | 0.03 s |
 | Unbiased Gamma Sampling | ![](assets/unbiased_gamma_sampling.gif) | 0.04 s |
-| Gaussian Blur | ![](assets/gaussian_blur.gif) | 0.78 s |
-| Sharpen | ![](assets/sharpen.gif) | 0.13 s |
+| Gaussian Blur | ![](assets/gaussian_blur.gif) | 0.61 s |
+| Sharpen | ![](assets/sharpen.gif) | 0.11 s |
 | Shear X | ![](assets/shear_x.gif) | 0.06 s |
 | Shear Y | ![](assets/shear_y.gif) | 0.06 s |
 | Translate X | ![](assets/translate_x.gif) | 0.09 s |

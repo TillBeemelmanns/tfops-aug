@@ -1,7 +1,6 @@
 import tensorflow as tf
 from tensorflow.keras import layers
 
-
 from augmentation_policies import augmentation_policy
 from augmentation_operations import apply_augmentation_policy
 
@@ -43,15 +42,16 @@ def create_classificator(input_shape, num_classes):
 
     x = layers.GlobalAveragePooling2D()(x)
     if num_classes == 2:
-         activation = "sigmoid"
-         units = 1
+        activation = "sigmoid"
+        units = 1
     else:
-         activation = "softmax"
-         units = num_classes
+        activation = "softmax"
+        units = num_classes
 
     x = layers.Dropout(0.5)(x)
     outputs = layers.Dense(units, activation=activation)(x)
     return tf.keras.Model(inputs, outputs)
+
 
 def augmentor_func(img, label):
     img = apply_augmentation_policy(img, augmentation_policy)
@@ -59,11 +59,9 @@ def augmentor_func(img, label):
 
 
 if __name__ == '__main__':
-
     image_size = (180, 180)
     batch_size = 32
     epochs = 50
-
 
     train_dataset = tf.keras.preprocessing.image_dataset_from_directory(
         "PetImages",

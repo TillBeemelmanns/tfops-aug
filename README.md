@@ -35,6 +35,31 @@ The augmentation policy from above would result in the following:
  
 ![](assets/augmentation_policy.gif)
 
+### Usage
+```python
+import tensorflow as tf
+from augmentation_operations import apply_augmentation_policy
+
+def augmentor_func(img, label):
+    img = apply_augmentation_policy(img, policy)
+    return img, label
+
+
+train_dataset = tf.keras.preprocessing.image_dataset_from_directory(
+    "PetImages",
+    validation_split=0.2,
+    subset="training",
+    seed=1337,
+    image_size=(180, 180),
+    batch_size=1
+).unbatch()
+
+
+train_dataset = train_dataset.map(augmentor_func).batch(32).prefetch(32)
+```
+
+
+
 ### Augmentation Methods
 A list of all implemented augmentation techniques is given here. Additional, methods will be implemented in the near 
 future. Performance is measured with the `test_image.jpg` which has size `2048 x 1024`. All augmentation methods are 

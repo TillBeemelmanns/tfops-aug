@@ -4,7 +4,7 @@ import time
 import cv2
 import pprint
 
-from data_generator import Dataset
+from utils.data_generator import Dataset
 import common
 
 from augmentation_operations import ALL_AUGMENTATION_NAMES_AS_LIST, apply_augmentation_policy

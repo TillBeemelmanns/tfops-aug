@@ -36,6 +36,8 @@ The augmentation policy from above would result in the following:
 ![](assets/augmentation_policy.gif)
 
 ### Usage
+A full example script for image classification can be found in [classification_example.py](classification_example.py).
+This excerpt demonstrates the simplicity for the usage of the augmentation methods:
 ```python
 import tensorflow as tf
 from augmentation_operations import apply_augmentation_policy
@@ -43,7 +45,6 @@ from augmentation_operations import apply_augmentation_policy
 def augmentor_func(img, label):
     img = apply_augmentation_policy(img, policy)
     return img, label
-
 
 train_dataset = tf.keras.preprocessing.image_dataset_from_directory(
     "PetImages",
@@ -53,7 +54,6 @@ train_dataset = tf.keras.preprocessing.image_dataset_from_directory(
     image_size=(180, 180),
     batch_size=1
 ).unbatch()
-
 
 train_dataset = train_dataset.map(augmentor_func).batch(32).prefetch(32)
 ```

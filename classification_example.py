@@ -1,7 +1,7 @@
 import tensorflow as tf
 from tensorflow.keras import layers
 
-from augmentation_policies import augmentation_policy
+from augmentation_policies import classification_policy
 from augmentation_operations import apply_augmentation_policy
 
 
@@ -54,11 +54,11 @@ def create_classificator(input_shape, num_classes):
 
 
 def augmentor_func(img, label):
-    img = apply_augmentation_policy(img, augmentation_policy)
+    img = apply_augmentation_policy(img, classification_policy)
     return img, label
 
 
-if __name__ == '__main__':
+def train_classifier():
     image_size = (180, 180)
     batch_size = 32
     epochs = 50
@@ -98,3 +98,7 @@ if __name__ == '__main__':
         callbacks=callbacks,
         validation_data=val_dataset,
     )
+
+
+if __name__ == '__main__':
+    train_classifier()

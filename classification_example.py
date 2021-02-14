@@ -7,8 +7,9 @@ from augmentation_operations import apply_augmentation_policy
 
 def create_classificator(input_shape, num_classes):
     inputs = tf.keras.Input(shape=input_shape)
+    x = layers.experimental.preprocessing.Rescaling(1. / 255)(inputs)
 
-    x = layers.Conv2D(32, 3, strides=2, padding="same")(inputs)
+    x = layers.Conv2D(32, 3, strides=2, padding="same")(x)
     x = layers.BatchNormalization()(x)
     x = layers.Activation("relu")(x)
 
@@ -101,4 +102,6 @@ def train_classifier():
 
 
 if __name__ == '__main__':
+    physical_devices = tf.config.experimental.list_physical_devices('GPU')
+    tf.config.experimental.set_memory_growth(physical_devices[0], True)
     train_classifier()

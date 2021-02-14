@@ -1,8 +1,11 @@
 # Implementation of Google's Auto-Augmentation based on TF2 OPS
 
-Exemplary implementation for learning augmentation policies from your training data distribution. The augmentation
-operations rely on Tf2 operations which allows scalability and high computational throughput even on large images. 
-Furthermore, the augmentation pipeline can be easily integrated into the tf.data API.
+Exemplary implementation for learning augmentation policies from your training data distribution. The principle for the
+augmentation relies on Google's AutoAugment paper "Learning Augmentation Policies from Data" [1]. This repository 
+implements the augmentation policy logic and the augmentation functions itself. 
+ 
+The augmentation operations rely on TF2.X operations which allow scalability and high computational throughput even with
+large images. Furthermore, the augmentation pipeline can be easily integrated into the tf.data API.
 
 ### Example for an augmentation policy
 ```python
@@ -48,9 +51,7 @@ def augmentor_func(img, label):
 
 train_dataset = tf.keras.preprocessing.image_dataset_from_directory(
     "PetImages",
-    validation_split=0.2,
     subset="training",
-    seed=1337,
     image_size=(180, 180),
     batch_size=1
 ).unbatch()
@@ -85,6 +86,14 @@ executed with `level=5`. Averaged over 500 samples on the Intel Core i7 Prozesso
 | Shear Y | ![](assets/shear_y.gif) | 0.06 s |
 | Translate X | ![](assets/translate_x.gif) | 0.09 s |
 | Translate Y | ![](assets/translate_y.gif) | 0.09 s |
+
+### Reference
+
+```
+[1] AutoAugment: Learning Augmentation Policies from Data - 2019
+    Ekin Dogus Cubuk and Barret Zoph and Dandelion Mane and Vijay Vasudevan and Quoc V. Le
+    https://arxiv.org/pdf/1805.09501.pdf
+```
 
 ### TODO
 - [ ] More Augmentation Methods

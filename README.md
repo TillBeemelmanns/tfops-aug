@@ -51,9 +51,7 @@ def augmentor_func(img, label):
 
 train_dataset = tf.keras.preprocessing.image_dataset_from_directory(
     "PetImages",
-    validation_split=0.2,
     subset="training",
-    seed=1337,
     image_size=(180, 180),
     batch_size=1
 ).unbatch()

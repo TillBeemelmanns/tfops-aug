@@ -293,7 +293,7 @@ def add_gaussian_noise(image, level) -> tf.Tensor:
 # Shape Augmentations
 def _shear_x(image, level) -> tf.Tensor:
     image = tfa.image.shear_x(
-        tf.cast(image, dtype=tf.uint8), level, common.PIXEL_VALUE_PAD)
+        image, level, common.PIXEL_VALUE_PAD)
     return image
 
 def shear_x(image, level) -> tf.Tensor:
@@ -303,7 +303,7 @@ def shear_x(image, level) -> tf.Tensor:
 
 def _shear_y(image, level) -> tf.Tensor:
     image = tfa.image.shear_y(
-        tf.cast(image, dtype=tf.uint8), level, common.PIXEL_VALUE_PAD)
+        image, level, common.PIXEL_VALUE_PAD)
     return image
 
 def shear_y(image, level) -> tf.Tensor:
@@ -313,7 +313,7 @@ def shear_y(image, level) -> tf.Tensor:
 
 def _translate_x(image, level) -> tf.Tensor:
     image = tfa.image.translate_xy(
-        tf.cast(image, dtype=tf.uint8),
+        image,
         [level, 0],
         common.PIXEL_VALUE_PAD
     )
@@ -326,7 +326,7 @@ def translate_x(image, level) -> tf.Tensor:
 
 def _translate_y(image, level) -> tf.Tensor:
     image = tfa.image.translate_xy(
-        tf.cast(image, dtype=tf.uint8),
+        image,
         [0, level],
         common.PIXEL_VALUE_PAD
     )

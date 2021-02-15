@@ -5,7 +5,7 @@ from augmentation_policies import classification_policy
 from augmentation_operations import apply_augmentation_policy
 
 
-def create_classificator(input_shape, num_classes):
+def create_classifier(input_shape, num_classes):
     inputs = tf.keras.Input(shape=input_shape)
     x = layers.experimental.preprocessing.Rescaling(1. / 255)(inputs)
 
@@ -83,7 +83,7 @@ def train_classifier():
 
     train_dataset = train_dataset.map(augmentor_func).batch(batch_size).prefetch(32)
 
-    model = create_classificator(input_shape=image_size + (3,), num_classes=2)
+    model = create_classifier(input_shape=image_size + (3,), num_classes=2)
 
     callbacks = [
         tf.keras.callbacks.ModelCheckpoint("save_at_{epoch}.h5"),

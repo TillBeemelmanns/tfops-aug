@@ -104,5 +104,6 @@ executed with `level=5`. Averaged over 500 samples on the Intel Core i7 Prozesso
     - [ ] Random Translation
     - [ ] Random Rotation
 - [X] Implement Learning Pipeline
+- [ ] Implement augmentation policies identical to these in [1]
 - [ ] Implement augmentation policy search with Ray Tune
 - [ ] Clean up Code (Unified Docstrings)

@@ -61,11 +61,11 @@ def augmentor_func(img, label):
 
 def train_classifier():
     image_size = (180, 180)
-    batch_size = 32
+    batch_size = 64
     epochs = 50
 
     train_dataset = tf.keras.preprocessing.image_dataset_from_directory(
-        "PetImages",
+        "src/PetImages",
         validation_split=0.2,
         subset="training",
         seed=1337,
@@ -73,7 +73,7 @@ def train_classifier():
         batch_size=1
     ).unbatch()
     val_dataset = tf.keras.preprocessing.image_dataset_from_directory(
-        "PetImages",
+        "src/PetImages",
         validation_split=0.2,
         subset="validation",
         seed=1337,
@@ -86,7 +86,14 @@ def train_classifier():
     model = create_classifier(input_shape=image_size + (3,), num_classes=2)
 
     callbacks = [
-        tf.keras.callbacks.ModelCheckpoint("save_at_{epoch}.h5"),
+        tf.keras.callbacks.TensorBoard(
+                        log_dir='/src/logs',
+                        write_graph=True,
+                        write_images=False,
+                        write_steps_per_second=False,
+                        update_freq='epoch',
+                        profile_batch=500
+        )
     ]
     model.compile(
         optimizer=tf.keras.optimizers.Adam(1e-3),
@@ -102,6 +109,4 @@ def train_classifier():
 
 
 if __name__ == '__main__':
-    #physical_devices = tf.config.experimental.list_physical_devices('GPU')
-    #tf.config.experimental.set_memory_growth(physical_devices[0], True)
     train_classifier()

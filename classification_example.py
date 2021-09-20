@@ -81,7 +81,7 @@ def train_classifier():
         batch_size=batch_size,
     )
 
-    train_dataset = train_dataset.map(augmentor_func).batch(batch_size).prefetch(32)
+    train_dataset = train_dataset.map(augmentor_func).batch(batch_size).prefetch(tf.data.AUTOTUNE)
 
     model = create_classifier(input_shape=image_size + (3,), num_classes=2)
 
@@ -102,6 +102,6 @@ def train_classifier():
 
 
 if __name__ == '__main__':
-    physical_devices = tf.config.experimental.list_physical_devices('GPU')
-    tf.config.experimental.set_memory_growth(physical_devices[0], True)
+    #physical_devices = tf.config.experimental.list_physical_devices('GPU')
+    #tf.config.experimental.set_memory_growth(physical_devices[0], True)
     train_classifier()

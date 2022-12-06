@@ -77,7 +77,7 @@ executed with `level=5`. Averaged over 500 samples on the Intel Core i7 Prozesso
 | Histogramm Equalization | ![](assets/equalize.gif) |         0.04 s          |
 | Invert | ![](assets/invert.gif) |         0.01 s          |
 | Posterize | ![](assets/posterize.gif) |         0.02 s          |
-| Solarize | ![](assets/solarize.gif) |         0.017 s         |
+| Solarize | ![](assets/solarize.gif) |         0.01 s          |
 | Unbiased Gamma Sampling | ![](assets/unbiased_gamma_sampling.gif) |         0.02 s          |
 | Gaussian Blur | ![](assets/gaussian_blur.gif) |         0.14 s          |
 | Sharpen | ![](assets/sharpen.gif) |         0.05 s          |

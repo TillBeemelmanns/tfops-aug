@@ -20,8 +20,8 @@ class TestAllAugmentations(tf.test.TestCase):
             augmentation_policy['sub_policy0'] = subpolicy
             img = tf.convert_to_tensor(img_org)
             img = apply_augmentation_policy(img, augmentation_policy)
-            img = img.numpy()
 
+            self.assertDTypeEqual(img, tf.uint8)
             self.assertEqual(img.shape, img_org.shape)
             self.assertGreaterEqual(np.min(img), 0)
             self.assertLessEqual(np.max(img), 255)

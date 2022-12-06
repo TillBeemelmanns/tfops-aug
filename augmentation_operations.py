@@ -68,7 +68,7 @@ def _sharpen(image: tf.Tensor, level: float) -> tf.Tensor:
 
 def sharpen(image: tf.Tensor, level: int) -> tf.Tensor:
     level = float_parameter(level, maxval=8, minval=1.5)
-    return _sharpen(image, level)
+    return tf.cast(_sharpen(tf.cast(image, tf.float32), level), tf.uint8)
 
 
 def _gaussian_blur(image: tf.Tensor, level: int, sigma=3) -> tf.Tensor:
@@ -102,20 +102,21 @@ def _gaussian_blur(image: tf.Tensor, level: int, sigma=3) -> tf.Tensor:
 
 def gaussian_blur(image: tf.Tensor, level: int) -> tf.Tensor:
     level = int_parameter(level, maxval=15, minval=3)
-    return _gaussian_blur(image, level)
+    return tf.cast(_gaussian_blur(tf.cast(image, tf.float32), level), tf.uint8)
 
 
 # Color Augmentations
 def _posterize(image: tf.Tensor, level: int) -> tf.Tensor:
     """
     Reduce the number of color levels per channel.
-    :param Tensor image: image as Tensor of type tf.uint8 with range 0-255
+    :param Tensor image: image as Tensor of type tf.uint8
     :param int level: level of posterize effect
-    :return: Tensor
+    :return: tf.Tensor
     """
     image = tf.cast(image, dtype=tf.float32) * (level / 255.0)
     image = tf.round(image)
     image = image * (255.0 / level)
+    image = tf.cast(image, dtype=tf.uint8)
     return image
 
 
@@ -128,8 +129,8 @@ def posterize(image: tf.Tensor, level: int,
 def _solarize(image: tf.Tensor, threshold: int) -> tf.Tensor:
     """
     Invert all pixel values above a threshold
-    :param image: Image as tf.Tensor
-    :param threshold: Threshold in [0, 255]
+    :param Tensor image: image as Tensor of type tf.uint8
+    :param threshold: Threshold in range [0, 255]
     :return: Solarized Image
     """
     return tf.where(image < threshold, image, 255 - image)
@@ -149,6 +150,7 @@ def _unbiased_gamma_sampling(image: tf.Tensor, z_range: float) -> tf.Tensor:
     gamma = (tf.math.log(0.5 + 1.0 / tf.sqrt(2.0) * factor) /
              tf.math.log(0.5 - 1.0 / tf.sqrt(2.0) * factor))
     image = tf.math.pow(scaled_image, gamma) * 255.0
+    image = tf.cast(image, tf.uint8)
     return image
 
 
@@ -183,24 +185,28 @@ def equalize_histogram(image: tf.Tensor, level: int) -> tf.Tensor:
     r = _equalize_histogram(tf.expand_dims(image[:, :, 0], -1))
     g = _equalize_histogram(tf.expand_dims(image[:, :, 1], -1))
     b = _equalize_histogram(tf.expand_dims(image[:, :, 2], -1))
-    image = tf.squeeze(tf.cast(tf.stack([r, g, b], axis=-2), dtype=tf.float32))
+    image = tf.squeeze(tf.cast(tf.stack([r, g, b], axis=-2), dtype=tf.uint8))
     return image
 
 
 def invert(image: tf.Tensor, level: int) -> tf.Tensor:
     """
     Invert all pixel of the input image
-    :param image: Image as tf.Tensor as tf.float32 in range (0- 255)
-    :param _: Level Not used
-    :return: Inverted Image as tf.float32
+    :param image: Image as tf.Tensor as tf.uint8 in range (0- 255)
+    :param level: level not used
+    :return: Inverted Image as tf.uint8
     """
-    image = tf.constant(255.0, dtype=tf.float32) - image
+    image = tf.constant(255, dtype=tf.uint8) - image
     return image
 
 
 def adjust_brightness(image: tf.Tensor, level: int) -> tf.Tensor:
     level = int_parameter(level, maxval=180, minval=0)
-    return tf.image.adjust_brightness(image, level)
+    image = tf.cast(image, tf.float32)
+    image = tf.image.adjust_brightness(image, level)
+    image = tf.clip_by_value(image, 0.0, 255.0)
+    image = tf.cast(image, tf.uint8)
+    return image
 
 
 def adjust_contrast(image: tf.Tensor, level: int) -> tf.Tensor:
@@ -214,7 +220,7 @@ def adjust_hue(image: tf.Tensor, level: int) -> tf.Tensor:
 
 
 def adjust_saturation(image: tf.Tensor, level: int) -> tf.Tensor:
-    level = float_parameter(level, maxval=2, minval=0)
+    level = float_parameter(level, maxval=5, minval=0)
     return tf.image.adjust_saturation(image, saturation_factor=level)
 
 
@@ -225,13 +231,16 @@ def adjust_gamma(image: tf.Tensor, level: int) -> tf.Tensor:
 
 def adjust_jpeg_quality(image: tf.Tensor, level: int) -> tf.Tensor:
     level = int_parameter(level, maxval=50, minval=0)
-    return tf.image.adjust_jpeg_quality(tf.cast(image, tf.float32) / 255.0, level) * 255.0
+    return tf.image.adjust_jpeg_quality(image, level)
 
 
 def add_noise(image: tf.Tensor, level: int) -> tf.Tensor:
     level = float_parameter(level, maxval=25, minval=3)
     noise = tf.random.normal(tf.shape(image), mean=0.0, stddev=level, dtype=tf.float32)
-    return image + noise
+    image = tf.cast(image, tf.float32) + noise
+    image = tf.clip_by_value(image, 0., 255.)
+    image = tf.cast(image, tf.uint8)
+    return image
 
 
 # Shape Augmentations

@@ -1,8 +1,9 @@
 """Tests for augmentation_operations.py"""
 
 import tensorflow as tf
+import cv2
 
-from augmentation_operations import int_parameter, float_parameter
+from augmentation_operations import int_parameter, float_parameter, AUGMENTATION_BY_NAME
 
 
 class TestIntParameter(tf.test.TestCase):
@@ -55,6 +56,18 @@ class TestFloatParameter2(tf.test.TestCase):
             value = float_parameter(10, maxval=maxval, minval=minval)
             self.assertEqual(value, maxval)
             self.assertDTypeEqual(value, float)
+
+
+class TestDtype(tf.test.TestCase):
+    def test_dtype(self):
+        img_org = cv2.cvtColor(cv2.imread("assets/test_image.jpg"), cv2.COLOR_BGR2RGB)
+
+        for name, op in AUGMENTATION_BY_NAME.items():
+            img = tf.convert_to_tensor(img_org)
+            img = op(img, 5)
+            self.assertDTypeEqual(img, tf.uint8)
+            self.assertGreaterEqual(tf.reduce_max(img), 0)
+            self.assertLessEqual(tf.reduce_min(img), 255)
 
 
 if __name__ == '__main__':

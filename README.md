@@ -43,7 +43,7 @@ A full example script for image classification can be found in [classification_e
 This excerpt demonstrates the simplicity for the usage of the augmentation methods:
 ```python
 import tensorflow as tf
-from augmentation_operations import apply_augmentation_policy
+from augmentation_utils import apply_augmentation_policy
 
 def augmentor_func(img, label):
     img = apply_augmentation_policy(img, policy)

@@ -65,26 +65,26 @@ A list of all implemented augmentation techniques is given here. Additional, met
 future. Performance is measured with the `test_image.jpg` which has size `2048 x 1024`. All augmentation methods are 
 executed with `level=5`. Averaged over 500 samples on the Intel Core i7 Prozessor 8665U.
 
-| Augmentation   |      Image      |   Performance (per Image)   |
-|----------|:-------------|:-------------:|
-| Additive Gaussian Noise | ![](assets/add_noise.gif) | 0.05 s |
-| Adjust Brightness | ![](assets/adjust_brightness.gif) | 0.02 s |
-| Adjust Contrast | ![](assets/adjust_contrast.gif) | 0.03 s |
-| Adjust Gamma | ![](assets/adjust_gamma.gif) | 0.04 s |
-| Adjust Hue | ![](assets/adjust_hue.gif) | 0.02 s |
-| Adjust JPEG Quality | ![](assets/adjust_jpeg_quality.gif) | 0.05 s |
-| Adjust Saturation | ![](assets/adjust_saturation.gif) | 0.02 s |
-| Histogramm Equalization | ![](assets/equalize.gif) | 0.05 s |
-| Invert | ![](assets/invert.gif) | 0.02 s |
-| Posterize | ![](assets/posterize.gif) | 0.02 s |
-| Solarize | ![](assets/solarize.gif) | 0.03 s |
-| Unbiased Gamma Sampling | ![](assets/unbiased_gamma_sampling.gif) | 0.04 s |
-| Gaussian Blur | ![](assets/gaussian_blur.gif) | 0.61 s |
-| Sharpen | ![](assets/sharpen.gif) | 0.11 s |
-| Shear X | ![](assets/shear_x.gif) | 0.06 s |
-| Shear Y | ![](assets/shear_y.gif) | 0.06 s |
-| Translate X | ![](assets/translate_x.gif) | 0.09 s |
-| Translate Y | ![](assets/translate_y.gif) | 0.09 s |
+| Augmentation   |      Image      | Performance (per Image) |
+|----------|:-------------|:-----------------------:|
+| Additive Gaussian Noise | ![](assets/add_noise.gif) |         0.02 s          |
+| Adjust Brightness | ![](assets/adjust_brightness.gif) |         0.01 s          |
+| Adjust Contrast | ![](assets/adjust_contrast.gif) |         0.02 s          |
+| Adjust Gamma | ![](assets/adjust_gamma.gif) |         0.02 s          |
+| Adjust Hue | ![](assets/adjust_hue.gif) |         0.01 s          |
+| Adjust JPEG Quality | ![](assets/adjust_jpeg_quality.gif) |         0.035 s         |
+| Adjust Saturation | ![](assets/adjust_saturation.gif) |         0.02 s          |
+| Histogramm Equalization | ![](assets/equalize.gif) |         0.04 s          |
+| Invert | ![](assets/invert.gif) |         0.01 s          |
+| Posterize | ![](assets/posterize.gif) |         0.02 s          |
+| Solarize | ![](assets/solarize.gif) |         0.017 s         |
+| Unbiased Gamma Sampling | ![](assets/unbiased_gamma_sampling.gif) |         0.02 s          |
+| Gaussian Blur | ![](assets/gaussian_blur.gif) |         0.14 s          |
+| Sharpen | ![](assets/sharpen.gif) |         0.05 s          |
+| Shear X | ![](assets/shear_x.gif) |         0.04 s          |
+| Shear Y | ![](assets/shear_y.gif) |         0.04 s          |
+| Translate X | ![](assets/translate_x.gif) |         0.05 s          |
+| Translate Y | ![](assets/translate_y.gif) |         0.05 s          |
 
 ### Reference
 
@@ -106,3 +106,4 @@ executed with `level=5`. Averaged over 500 samples on the Intel Core i7 Prozesso
 - [ ] Implement augmentation policies identical to these in [1]
 - [ ] Implement augmentation policy search with Ray Tune
 - [ ] Clean up Code (Unified Docstrings)
+- [ ] Create Python package

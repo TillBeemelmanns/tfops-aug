@@ -5,8 +5,9 @@ import cv2
 import pprint
 
 import common
-from augmentation_operations import ALL_AUGMENTATION_NAMES_AS_LIST, apply_augmentation_policy
+from augmentation_operations import ALL_AUGMENTATION_NAMES_AS_LIST
 from augmentation_policies import augmentation_policy
+from augmentation_utils import apply_augmentation_policy
 
 
 def parse_sample(image_path, rescale=False):
@@ -19,7 +20,6 @@ def parse_sample(image_path, rescale=False):
     """
     image_rgb = tf.image.decode_jpeg(tf.io.read_file(image_path), channels=3)
     image_rgb.set_shape(common.IMAGE_SHAPE)
-    image_rgb = tf.cast(image_rgb, tf.float32)
 
     if rescale:
         image_rgb = tf.image.resize(image_rgb, [1024, 2048], method=tf.image.ResizeMethod.BILINEAR)
@@ -48,7 +48,7 @@ def benachmark_dataset_pipeline(dataset_size=50, epochs=10, plot=False):
             time.sleep(0.01)
 
             if plot:
-                plt.imshow(augmented_image.numpy()/255.)
+                plt.imshow(augmented_image.numpy() / 255.)
                 plt.show()
 
     print("Augmented {0} images".format(dataset_size * epochs))
@@ -74,7 +74,6 @@ def measure_each_augmentation_method(iterations_per_augmentation=100):
             subpolicy['op0'] = [op, 1, 5]
             augmentation_policy['sub_policy0'] = subpolicy
             img = tf.convert_to_tensor(img_org)
-            img = tf.cast(img, dtype=tf.float32)
             img = apply_augmentation_policy(img, augmentation_policy)
             _ = img.numpy()
 

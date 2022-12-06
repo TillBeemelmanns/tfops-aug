@@ -1,13 +1,13 @@
 import tensorflow as tf
-from tensorflow.keras import layers
+from keras import layers
 
 from augmentation_policies import classification_policy
-from augmentation_operations import apply_augmentation_policy
+from augmentation_utils import apply_augmentation_policy
 
 
 def create_classifier(input_shape, num_classes):
     inputs = tf.keras.Input(shape=input_shape)
-    x = layers.experimental.preprocessing.Rescaling(1. / 255)(inputs)
+    x = layers.Rescaling(1. / 255)(inputs)
 
     x = layers.Conv2D(32, 3, strides=2, padding="same")(x)
     x = layers.BatchNormalization()(x)

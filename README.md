@@ -5,7 +5,8 @@ augmentation relies on Google's AutoAugment paper "Learning Augmentation Policie
 implements the augmentation policy logic and the augmentation functions itself. 
  
 The augmentation operations rely on TF2.X operations which allow scalability and high computational throughput even with
-large images. Furthermore, the augmentation pipeline can be easily integrated into the tf.data API.
+large images. Furthermore, the augmentation pipeline can be easily integrated into the tf.data API, because all
+operations rely on Tensorflow operations. 
 
 ### Example for an augmentation policy
 ```python

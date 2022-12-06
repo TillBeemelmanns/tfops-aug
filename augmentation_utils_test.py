@@ -1,12 +1,14 @@
-import unittest
+import tensorflow as tf
 import numpy as np
 import cv2
+import unittest
 
-from augmentation_operations import *
-from augmentation_policies import *
+from augmentation_operations import ALL_AUGMENTATION_NAMES_AS_LIST
+from augmentation_policies import test_policy
+from augmentation_utils import apply_augmentation_policy
 
 
-class TestDerivativeMethods(unittest.TestCase):
+class TestAugmentationUtils(unittest.TestCase):
     def test_all_augmentations(self):
         img_org = cv2.cvtColor(cv2.imread("assets/test_image.jpg"), cv2.COLOR_BGR2RGB)
 
@@ -16,7 +18,6 @@ class TestDerivativeMethods(unittest.TestCase):
             subpolicy['op0'] = [op, 1, 10]
             augmentation_policy['sub_policy0'] = subpolicy
             img = tf.convert_to_tensor(img_org)
-            img = tf.cast(img, dtype=tf.float32)
             img = apply_augmentation_policy(img, augmentation_policy)
             img = img.numpy()
 
@@ -27,7 +28,6 @@ class TestDerivativeMethods(unittest.TestCase):
     def test_augmentation_policy(self):
         img_org = cv2.cvtColor(cv2.imread("assets/test_image.jpg"), cv2.COLOR_BGR2RGB)
         img = tf.convert_to_tensor(img_org)
-        img = tf.cast(img, dtype=tf.float32)
         img = apply_augmentation_policy(img, test_policy)
         img = img.numpy()
 

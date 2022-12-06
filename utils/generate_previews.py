@@ -1,7 +1,10 @@
 import os
 import cv2
 
-from augmentation_operations import *
+import tensorflow as tf
+
+from augmentation_operations import ALL_AUGMENTATION_NAMES_AS_LIST
+from augmentation_utils import apply_augmentation_policy
 from augmentation_policies import augmentation_policy
 
 import common
@@ -16,9 +19,8 @@ def generate_all_augmentation_gifs(image, save_dir):
             subpolicy['op0'] = [op, 1.0, level]
             augmentation_policy['sub_policy0'] = subpolicy
             img = tf.convert_to_tensor(image)
-            img = tf.cast(img, dtype=tf.float32)
             img = apply_augmentation_policy(img, augmentation_policy)
-            img = img.numpy().astype(dtype='uint8')
+            img = img.numpy()
             img = cv2.resize(img, (img.shape[1]//4, img.shape[0]//4))
             img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
             cv2.imwrite(f"{save_dir}/{op}_{level}.jpg", img)
@@ -30,9 +32,8 @@ def generate_all_augmentation_gifs(image, save_dir):
 def generate_augmentation_policy_gif(image, policy, save_dir):
     for i in range(20):
         img = tf.convert_to_tensor(image)
-        img = tf.cast(img, dtype=tf.float32)
         img = apply_augmentation_policy(img, policy)
-        img = img.numpy().astype(dtype='uint8')
+        img = img.numpy()
         img = cv2.resize(img, (img.shape[1]//4, img.shape[0]//4))
         img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
         cv2.imwrite(f"{save_dir}/augmentation_policy_{i}.jpg", img)

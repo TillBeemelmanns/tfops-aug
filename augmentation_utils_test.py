@@ -1,14 +1,15 @@
+"""Tests for augmentation_utils.py"""
+
 import tensorflow as tf
 import numpy as np
 import cv2
-import unittest
 
 from augmentation_operations import ALL_AUGMENTATION_NAMES_AS_LIST
 from augmentation_policies import test_policy
 from augmentation_utils import apply_augmentation_policy
 
 
-class TestAugmentationUtils(unittest.TestCase):
+class TestAllAugmentations(tf.test.TestCase):
     def test_all_augmentations(self):
         img_org = cv2.cvtColor(cv2.imread("assets/test_image.jpg"), cv2.COLOR_BGR2RGB)
 
@@ -25,6 +26,8 @@ class TestAugmentationUtils(unittest.TestCase):
             self.assertGreaterEqual(np.min(img), 0)
             self.assertLessEqual(np.max(img), 255)
 
+
+class TestAugmentationPolicy(tf.test.TestCase):
     def test_augmentation_policy(self):
         img_org = cv2.cvtColor(cv2.imread("assets/test_image.jpg"), cv2.COLOR_BGR2RGB)
         img = tf.convert_to_tensor(img_org)
@@ -37,4 +40,4 @@ class TestAugmentationUtils(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    tf.test.main()

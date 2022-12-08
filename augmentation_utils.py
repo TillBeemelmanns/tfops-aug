@@ -1,7 +1,6 @@
 import tensorflow as tf
 
-from augmentation_operations import AUGMENTATION_BY_NAME
-
+from .augmentation_operations import AUGMENTATION_BY_NAME
 
 def apply_augmentation_policy(image: tf.Tensor, policy: dict) -> tf.Tensor:
     """

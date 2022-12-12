@@ -1,7 +1,7 @@
 import tensorflow as tf
 import tensorflow_addons as tfa
 
-from tfops_aug import common
+PIXEL_VALUE_PAD = [127, 127, 127]
 
 
 def int_parameter(level: int, maxval: int, minval: int) -> int:
@@ -246,7 +246,7 @@ def add_noise(image: tf.Tensor, level: int) -> tf.Tensor:
 # Shape Augmentations
 def _shear_x(image: tf.Tensor, level: float) -> tf.Tensor:
     image = tfa.image.shear_x(
-        image, level, common.PIXEL_VALUE_PAD)
+        image, level, PIXEL_VALUE_PAD)
     return image
 
 
@@ -258,7 +258,7 @@ def shear_x(image: tf.Tensor, level: int) -> tf.Tensor:
 
 def _shear_y(image: tf.Tensor, level: float) -> tf.Tensor:
     image = tfa.image.shear_y(
-        image, level, common.PIXEL_VALUE_PAD)
+        image, level, PIXEL_VALUE_PAD)
     return image
 
 
@@ -272,7 +272,7 @@ def _translate_x(image: tf.Tensor, level: float) -> tf.Tensor:
     image = tfa.image.translate_xy(
         image,
         [level, 0],
-        common.PIXEL_VALUE_PAD
+        PIXEL_VALUE_PAD
     )
     return image
 
@@ -287,7 +287,7 @@ def _translate_y(image: tf.Tensor, level: int) -> tf.Tensor:
     image = tfa.image.translate_xy(
         image,
         [0, level],
-        common.PIXEL_VALUE_PAD
+        PIXEL_VALUE_PAD
     )
     return image
 

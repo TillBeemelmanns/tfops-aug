@@ -47,3 +47,31 @@ def apply_sub_policy(image: tf.Tensor, sub_policy: dict) -> tf.Tensor:
 
     return image
 
+
+def validate_augmentation_policy(policy: dict) -> bool:
+    """
+    Validates if augmentation policy has a correct structure and naming.
+    Returns True if everything is correct, otherwise False
+    :param policy dict
+    returns: Bool
+    """
+    num_policies = len(policy)
+    for idx in range(num_policies):
+        if "sub_policy" + str(idx) in policy:
+            sub_policy = policy["sub_policy" + str(idx)]
+            for idx_sub in range(len(sub_policy)):
+                if "op"+str(idx_sub) in sub_policy:
+                    operation = sub_policy["op" + str(idx_sub)]
+                    if operation[0] not in AUGMENTATION_BY_NAME:
+                        return False
+                    if operation[1] > 1.0 or operation[1] < 0.0:
+                        return False
+                    if operation[2] > 10 or \
+                       operation[2] < 0  or \
+                       type(operation[2]) != int:
+                        return False
+                else:
+                    return False
+        else:
+            return False
+    return True

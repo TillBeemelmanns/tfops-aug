@@ -67,3 +67,6 @@ test_policy = {
     'sub_policy9': {'op0': ['equalize', 1.0, 0],
                     'op1': ['solarize', 1.0, 6]}
 }
+
+
+ALL_POLICIES = [augmentation_policy, classification_policy, test_policy]

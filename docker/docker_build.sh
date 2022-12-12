@@ -1,3 +1,3 @@
 #!/bin/sh
 
-docker build --tag auto-augment .
+docker build --tag tfops_aug .

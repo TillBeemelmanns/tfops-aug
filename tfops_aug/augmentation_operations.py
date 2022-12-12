@@ -1,7 +1,7 @@
 import tensorflow as tf
 import tensorflow_addons as tfa
 
-import common
+from tfops_aug import common
 
 
 def int_parameter(level: int, maxval: int, minval: int) -> int:

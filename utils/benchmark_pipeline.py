@@ -4,11 +4,11 @@ import time
 import cv2
 import pprint
 
-import common
-from augmentation_operations import ALL_AUGMENTATION_NAMES_AS_LIST
-from augmentation_policies import augmentation_policy
-from augmentation_utils import apply_augmentation_policy
+from tfops_aug.augmentation_operations import ALL_AUGMENTATION_NAMES_AS_LIST
+from tfops_aug.augmentation_policies import augmentation_policy
+from tfops_aug.augmentation_utils import apply_augmentation_policy
 
+import config
 
 def parse_sample(image_path, rescale=False):
     """
@@ -19,7 +19,7 @@ def parse_sample(image_path, rescale=False):
     image_rgb -- tf.Tensor of size [1024, 2048, 3] as tf.uint8 containing the camera image
     """
     image_rgb = tf.image.decode_jpeg(tf.io.read_file(image_path), channels=3)
-    image_rgb.set_shape(common.IMAGE_SHAPE)
+    image_rgb.set_shape(config.IMAGE_SHAPE)
 
     if rescale:
         image_rgb = tf.image.resize(image_rgb, [1024, 2048], method=tf.image.ResizeMethod.BILINEAR)
@@ -33,7 +33,7 @@ def augmentor_func(img):
 
 
 def benachmark_dataset_pipeline(dataset_size=50, epochs=10, plot=False):
-    dataset = tf.data.Dataset.from_tensor_slices([common.TEST_IMAGE_PATH])
+    dataset = tf.data.Dataset.from_tensor_slices([config.TEST_IMAGE_PATH])
     dataset = dataset.repeat(dataset_size)
     dataset = dataset.map(parse_sample, num_parallel_calls=tf.data.AUTOTUNE)
     dataset = dataset.map(augmentor_func, num_parallel_calls=tf.data.AUTOTUNE)
@@ -62,7 +62,7 @@ def measure_each_augmentation_method(iterations_per_augmentation=100):
     :param iterations_per_augmentation: Number of iterations per augmentation function
     :return: dictionary with augmentation function as key and time needed for one cycle as value in [s]
     """
-    img_org = cv2.cvtColor(cv2.imread(common.TEST_IMAGE_PATH), cv2.COLOR_BGR2RGB)
+    img_org = cv2.cvtColor(cv2.imread(config.TEST_IMAGE_PATH), cv2.COLOR_BGR2RGB)
 
     time_per_augmentation = {}
 

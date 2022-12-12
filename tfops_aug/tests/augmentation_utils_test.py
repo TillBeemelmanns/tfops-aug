@@ -4,9 +4,9 @@ import tensorflow as tf
 import numpy as np
 import cv2
 
-from augmentation_operations import ALL_AUGMENTATION_NAMES_AS_LIST
-from augmentation_policies import test_policy
-from augmentation_utils import apply_augmentation_policy
+from tfops_aug.augmentation_operations import ALL_AUGMENTATION_NAMES_AS_LIST
+from tfops_aug.augmentation_policies import test_policy
+from tfops_aug.augmentation_utils import apply_augmentation_policy
 
 
 class TestAllAugmentations(tf.test.TestCase):

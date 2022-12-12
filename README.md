@@ -39,11 +39,11 @@ The augmentation policy from above would result in the following:
 ![](assets/augmentation_policy.gif)
 
 ### Usage
-A full example script for image classification can be found in [classification_example.py](classification_example.py).
+A full example script for image classification can be found in [classification_example.py](utils/classification_example.py).
 This excerpt demonstrates the simplicity for the usage of the augmentation methods:
 ```python
 import tensorflow as tf
-from augmentation_utils import apply_augmentation_policy
+from tfops_aug.augmentation_utils import apply_augmentation_policy
 
 def augmentor_func(img, label):
     img = apply_augmentation_policy(img, policy)

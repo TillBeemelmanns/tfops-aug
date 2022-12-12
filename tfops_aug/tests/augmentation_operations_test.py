@@ -3,8 +3,7 @@
 import tensorflow as tf
 import cv2
 
-from augmentation_operations import int_parameter, float_parameter, AUGMENTATION_BY_NAME
-
+from tfops_aug.augmentation_operations import int_parameter, float_parameter, AUGMENTATION_BY_NAME
 
 class TestIntParameter(tf.test.TestCase):
     def test_int_parameter(self):

@@ -1,8 +1,8 @@
 import tensorflow as tf
 from keras import layers
 
-from augmentation_policies import classification_policy
-from augmentation_utils import apply_augmentation_policy
+from tfops_aug.augmentation_policies import classification_policy
+from tfops_aug.augmentation_utils import apply_augmentation_policy
 
 
 def create_classifier(input_shape, num_classes):

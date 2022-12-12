@@ -1,11 +1,14 @@
-# TFOps-Aug: Implementation of simple augmentation techniques based on TF2 Operations
+# TFOps-Aug: Implementation of policy-based image augmentation techniques based on TF2 Operations
 
-The principle for the augmentation mechanism relies on Google's AutoAugment paper "Learning Augmentation Policies 
-from Data" [1]. This repository implements the augmentation policy logic and the augmentation functions itself.
+The principle for the augmentation mechanism of __TFOps-Aug__ relies on Google's AutoAugment paper "Learning
+Augmentation Policies from Data" [1]. This repository implements the augmentation policy logic and many of the
+augmentation functions. Like in the original implementation, the augmentation procedure is defined as a policy,
+which consists of several subpolicies and operations.
  
 The augmentation operations rely on Tensorflow 2 operations which allow scalability and high computational throughput
 even with large images. Furthermore, the augmentation pipeline can be easily integrated into the `tf.data` API, because
-all operations rely on Tensorflow operations and can be execute on image representations of type `tf.Tensor`. 
+all operations rely on Tensorflow operations and can be execute on image representations of type `tf.Tensor`. Currently,
+only image representations of type `tf.uint8` are supported.
 
 
 ### Installation
@@ -119,3 +122,4 @@ executed with `level=5`. Averaged over 500 samples on the Intel Core i7 Prozesso
 - [ ] Implement augmentation policy search with Ray Tune
 - [ ] Clean up Code (Unified Docstrings)
 - [X] Create Python package
+- [ ] Support image representation types, other than `uint8`

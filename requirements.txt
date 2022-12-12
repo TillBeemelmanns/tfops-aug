@@ -1,5 +1,4 @@
-tensorflow
-tensorflow-addons
+tensorflow-addons==0.19.0
 numpy
 matplotlib
 opencv-python

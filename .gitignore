@@ -1,5 +1,6 @@
 venv2
 data
+dist
 .idea
 *.tfrecord
 *.pyc

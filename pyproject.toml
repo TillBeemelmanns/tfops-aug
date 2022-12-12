@@ -1,0 +1,26 @@
+[build-system]
+requires = ["hatchling", "hatch-requirements-txt"]
+build-backend = "hatchling.build"
+
+[project]
+name = "tfops_aug"
+version = "0.0.1"
+authors = [
+  { name="Till Beemelmanns", email="till.beemelmanns@rwth-aachen.de" },
+]
+description = "Package to augment images using Tensorflow Ops"
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dynamic = ["dependencies"]
+
+[project.urls]
+"Homepage" = "https://github.com/TillBeemelmanns/auto-augment-tf2-operations"
+"Bug Tracker" = "https://github.com/TillBeemelmanns/auto-augment-tf2-operations/issues"
+
+[tool.hatch.metadata.hooks.requirements_txt]
+files = ["requirements.txt"]

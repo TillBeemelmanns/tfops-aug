@@ -102,6 +102,7 @@ executed with `level=5`. Averaged over 500 samples on the Intel Core i7 Prozesso
     - [X] Translate Y
     - [ ] Random Translation
     - [ ] Random Rotation
+- [ ] Make augmentation min and max values configurable
 - [X] Implement Learning Pipeline
 - [ ] Implement augmentation policies identical to these in [1]
 - [ ] Implement augmentation policy search with Ray Tune

@@ -1,11 +1,20 @@
-# Implementation of Google's Auto-Augmentation based on TF2 OPS
+# TFOps-Aug: Implementation of simple augmentation techniques based on TF2 Operations
 
-Exemplary implementation for learning augmentation policies from your training data distribution. The principle for the augmentation relies on Google's AutoAugment paper "Learning Augmentation Policies from Data" [1]. This repository 
-implements the augmentation policy logic and the augmentation functions itself. 
+The principle for the augmentation mechanism relies on Google's AutoAugment paper "Learning Augmentation Policies 
+from Data" [1]. This repository implements the augmentation policy logic and the augmentation functions itself.
  
-The augmentation operations rely on TF2.X operations which allow scalability and high computational throughput even with
-large images. Furthermore, the augmentation pipeline can be easily integrated into the tf.data API, because all
-operations rely on Tensorflow operations. 
+The augmentation operations rely on Tensorflow 2 operations which allow scalability and high computational throughput
+even with large images. Furthermore, the augmentation pipeline can be easily integrated into the `tf.data` API, because
+all operations rely on Tensorflow operations and can be execute on image representations of type `tf.Tensor`. 
+
+
+### Installation
+The package is available on [pypi.org](https://pypi.org/project/tfops-aug/) and can be installed with `pip`:
+
+```bash
+pip install tfops-aug
+```
+
 
 ### Example for an augmentation policy
 ```python
@@ -31,10 +40,11 @@ policy = {'sub_policy0': {'op0': ['adjust_saturation', 0.2, 2],
           'sub_policy9': {'op0': ['equalize', 0.6, 0],
                           'op1': ['solarize', 0.0, 6]}}
 ```
-Similar to Google's AutoAugment, a single augmentation policy consists of several subpolicies, which inturn consists of one or more 
-augmentation operation. Each operation is defined as a tuple of **augmentation method**, 
+
+Similar to Google's AutoAugment, a single augmentation policy consists of several subpolicies, which in turn consists of
+one or more augmentation operation. Each operation is defined as a tuple of **augmentation method**, 
 **probability** and **intensity**. Several operations within one subpolicy are applied in sequence. 
-The augmentation policy from above would result in the following:
+The augmentation policy from above would augment the [original image](assets/test_image.jpg) to the following output:
  
 ![](assets/augmentation_policy.gif)
 
@@ -43,6 +53,7 @@ A full example script for image classification can be found in [classification_e
 This excerpt demonstrates the simplicity for the usage of the augmentation methods:
 ```python
 import tensorflow as tf
+
 from tfops_aug.augmentation_utils import apply_augmentation_policy
 
 def augmentor_func(img, label):
@@ -107,4 +118,4 @@ executed with `level=5`. Averaged over 500 samples on the Intel Core i7 Prozesso
 - [ ] Implement augmentation policies identical to these in [1]
 - [ ] Implement augmentation policy search with Ray Tune
 - [ ] Clean up Code (Unified Docstrings)
-- [ ] Create Python package
+- [X] Create Python package

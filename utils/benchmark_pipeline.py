@@ -10,6 +10,7 @@ from tfops_aug.augmentation_utils import apply_augmentation_policy
 
 import config
 
+
 def parse_sample(image_path, rescale=False):
     """
     Argument:
